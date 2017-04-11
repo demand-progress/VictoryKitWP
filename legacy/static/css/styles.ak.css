@@ -1,0 +1,532 @@
+/* =============================================================================
+   Demand Progress - Actionkit styles
+   Author: @mvattuone, Citizen Engagement Laboratory
+
+   Mostly overriding base styles from main CSS for Demand Progress
+   ========================================================================== */
+
+/* =============================================================================
+   Helper Classes
+   ========================================================================== */
+
+   /* In mobile view, we don't want fixed positioning to be applied */
+   .fixed {
+   	position:static;
+   }
+
+   .tell_a_friend .image {
+   	float:left;
+   	margin-right:10px;
+   }
+
+   .taf_body {
+   	width: 94%;
+   }	
+
+   label[for=id_taf_subject] {
+   	display:inline-block;
+   }
+
+   h3.share-prompt {
+   	clear:both;
+   	font-size:1.2em;
+   }
+
+   .form-wrap {
+   	border: 1px solid #9f1719;
+   	padding:15px 28px;
+   }
+
+   .form-wrap h3 {
+   	margin-top:10px;
+   }
+
+   .statement-leadin {
+      font-size:22px;
+      line-height:23px;
+      margin: 10px 0;
+      font-family: inherit;
+      font-weight: bold;
+      color: #9f1719;
+      text-rendering: optimizelegibility;
+   }
+
+
+
+   #main {
+      margin:0;
+   }
+   
+/* =============================================================================
+   Progress Bar
+   ========================================================================== */
+
+   .progress-container {
+   	max-width:200px;
+   	margin:0 auto;
+   	display:block;
+   }
+
+   .progress-bg {
+   	border:3px solid #e1e1e1;
+   	height:30px;
+   	max-width:200px;
+   	position:relative;
+   }
+
+   .progress {
+   	height:30px;
+   	background-color: #9f1719;
+   	max-width:200px;
+   }
+
+   .progress.step-1 {
+   	width:33.33333%;
+   }
+
+   .progress.step-2 {
+   	width:66.66667%;
+   }
+
+   .progress.step-3 {
+   	width:100%;
+   }
+
+   .progress-step {
+   	text-align:left;
+   	color:black;
+   	margin:0;
+   }
+
+/* =============================================================================
+   Modal Specific
+   ========================================================================== */
+   .modal-body h3 {
+   	text-align:center;
+   }
+
+   .modal-body #post_to_facebook {
+   	float: none;
+   	margin: 0 auto;
+   	display: block;
+   }
+
+/* ==================================================================
+   Call Specific
+   ================================================================== */
+
+   .call #footer {
+      clear:both;
+   }
+
+/* ==================================================================
+	Donate Specific
+	================================================================== */
+
+	.donation label {
+		display: inline-block;
+	}
+
+	.donation .form-wrap {
+		overflow:auto;
+	}
+
+	.field {
+		display: inline-block;
+      vertical-align: middle;
+	}
+
+	#type {
+		margin:10px 0 20px 0;
+	}
+
+	#type input[type=radio], {
+		display:inline-block !important;
+		margin:0;
+	}
+
+	.donation .other_amount input[type=text] {
+		max-width:150px;
+	}
+
+	.donation .group label {
+		margin-right:5px;
+	}
+
+	.donation .exp_date select {
+		max-width:80px;
+	}
+
+	.donation input[type=text], .donation input[type=email], select#state, .card_number img, .card_exp_date {
+		margin-bottom:10px;
+		display:inline-block;
+	}
+
+	.donation #amount_list span {
+		margin-bottom: 5px;
+		display: inline-block;
+	}
+
+	.donation #amount_list {
+		display:inline-block;
+		padding:0 15px;
+	}
+
+	.donation #amount_list label {
+		float:none;
+		display:inline-block;
+	}
+
+	.donation #amount_list input[type=radio] {
+		display:none;
+	}
+
+	#make_donation {
+		position:relative;
+	}
+
+	label[for="state"] {
+		margin-right:10px;
+	}
+
+	.donation .field select {
+		width:182px;
+	}
+
+	.donation #card_code, .donation #zip {
+		max-width:80px;
+	}
+
+	input[type="radio"]:checked+label{ 
+		text-decoration: none;
+		background: #fbfbfb;
+		color: #d50000 !important;
+	} 
+
+	.donation {
+		clear:both;
+	}
+
+	.donation #donate_amount {
+		display:inline-block;
+		max-width:40px;
+		float:left;
+		margin-right:12px;
+		margin-left:110px;
+		height: 38px;
+		font-size: 22px;
+	}
+
+	.donation .amount-button {
+		float: right;
+		background-color:#010429;
+		padding: 2px 7px;
+		min-width:88px;
+		height: 48px;
+		border: none;
+		color: #ffffff;
+		text-align: center;
+		font-family: 'ProximaNovaSemibold';
+		font-weight: normal;
+		font-size: 16px;
+		letter-spacing: 0.14em;
+		line-height:46px;
+	}
+
+	.donation .field {
+		display:block;
+	}
+
+	.donation .field label {
+		display:block;
+	}
+
+	.donation .field input[type="text"],
+	.donation .field input[type="email"] {
+		display:block;
+		width:100%;
+		box-sizing:border-box;
+		-moz-box-sizing:border-box;
+		height:30px;
+	}
+
+/* =============================================================================
+   Share links
+   ========================================================================== */
+   
+   .group { 
+      margin:0;
+   }
+
+   .group li {
+   border: none;
+   color: white;
+   display: inline-block;
+   font-size: 15px;
+   line-height: 28px;
+   height: 27px;
+   padding: 0 20px;
+   -webkit-border-radius: 19px;
+   -moz-border-radius: 19px;
+   border-radius: 5px;
+   clear: both;
+   min-width:75px;
+   text-align:center;
+   vertical-align: middle;
+   position:relative;
+}
+
+   .group li a {
+      border:0 !important;
+      color:white !important;
+   }
+ .group li.facebook {
+   background-image: -moz-linear-gradient(top, #4568B2, #30487B);
+   background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#4568B2), to(#30487B));
+   background-image: -webkit-linear-gradient(top, #4568B2, #30487B);
+   background-image: -o-linear-gradient(top, #4568B2, #30487B);
+   background-image: linear-gradient(to bottom, #4568B2, #30487B);
+   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff4568b2', endColorstr='#ff30487b', GradientType=0);
+}
+
+.group li.facebook:before {
+   content:"";
+   display:inline-block;
+   background-repeat:no-repeat;
+   background-image:url('../images/share.png');
+   width:20px;
+   height:20px;
+   background-position:-48px 0;
+   background-size:64px 20px;
+   position:absolute;
+   left:4px;
+   top:2px;
+}
+
+ .group li.twitter {
+   background-color: #0BB8E7;
+   background-image: -moz-linear-gradient(top, #12CCFF, #009AC4);
+   background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#12CCFF), to(#009AC4));
+   background-image: -webkit-linear-gradient(top, #12CCFF, #009AC4);
+   background-image: -o-linear-gradient(top, #12CCFF, #009AC4);
+   background-image: linear-gradient(to bottom, #12CCFF, #009AC4);
+   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff12ccff', endColorstr='#ff009ac4', GradientType=0);
+}
+
+.group li.twitter:before {
+   content:"";
+   display:inline-block;
+   background-repeat:no-repeat;
+   /*background-image:url('../images/share.png');*/
+   width:20px;
+   height:20px;
+   background-position:-24px 0;
+   background-size:64px 20px;
+   position:absolute;
+   left:8px;
+   top:4px;
+}
+
+ .group li.g-plus {
+   background-color:#bc4d38;  
+   min-width:0;
+ }
+
+.fb-like.fb_edge_widget_with_comment.fb_iframe_widget, .twitter-share-button, iframe[src="http://www.reddit.com/static/button/button1.html?width=120&url=http%3A%2F%2Fact.demandprogress.org%2Fsign%2Fcfaa_idl_copy%2F"] {
+	float: left;
+	margin-right: 10px;
+	margin-top: 2px;
+}
+
+.twitter-share-button {
+	width: 77px !important;
+}
+
+#post_to_reddit {
+	width:122px;
+}
+
+.chip-in {
+   clear:both;
+   margin-top:60px;
+}
+
+   .chip-in h3 {
+      display: inline-block;
+      margin-top: 0;
+      float: left;
+      margin-right: 10px;
+   }
+
+   .chip-in #id_amount {
+      width:50px;
+   }
+
+   #post_to_facebook, #post_to_twitter {
+   	border: none;
+   	color: white;
+   	display: inline-block;
+   	font-size: 18px;
+   	text-transform: uppercase;
+   	text-decoration: none;
+   	line-height: 42px;
+   	height: 40px;
+   	padding: 0 15px;
+   	clear: both;
+   	min-width: 100px;
+   	text-align: center;
+   }
+
+   #post_to_facebook {
+   	background-image: -moz-linear-gradient(top, #4568B2, #30487B);
+   	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#4568B2), to(#30487B));
+   	background-image: -webkit-linear-gradient(top, #4568B2, #30487B);
+   	background-image: -o-linear-gradient(top, #4568B2, #30487B);
+   	background-image: linear-gradient(to bottom, #4568B2, #30487B);
+   	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff4568b2', endColorstr='#ff30487b', GradientType=0);
+   }
+
+   #post_to_twitter {
+   	background-color: #0BB8E7;
+   	background-image: -moz-linear-gradient(top, #12CCFF, #009AC4);
+   	background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#12CCFF), to(#009AC4));
+   	background-image: -webkit-linear-gradient(top, #12CCFF, #009AC4);
+   	background-image: -o-linear-gradient(top, #12CCFF, #009AC4);
+   	background-image: linear-gradient(to bottom, #12CCFF, #009AC4);
+   	filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff12ccff', endColorstr='#ff009ac4', GradientType=0);
+   }
+
+   /* Fixing a text overflow issue */
+   .submit-row p {
+      max-width: 100%;
+   }
+
+   /* Fixing input overflows for new users */
+   #unknown_user input {
+      max-width: 100%;
+   }
+
+   /* Preventing button from getting stuck behind progress bar */
+   #main.inner-page section article.padded a[href="#sign"] {
+      border: none;
+      display: block;
+      overflow: hidden;
+      padding: 0 0 24px;
+   }
+   #main.inner-page section article.padded a[href="#sign"] button {
+      line-height: 1;
+      padding-top: 2px;
+   }
+
+/* =============================================================================
+   Media Queries
+   ========================================================================== */
+
+   @media all and (min-width:768px) {
+      #main {
+         margin: 0px auto -155px;
+      }
+
+      .petition-form {
+         width:40%;
+         float:right;
+         padding-left:10px;
+         box-sizing:border-box;
+         -moz-box-sizing:border-box;
+      }
+
+      .petition-heading {
+         float:left;
+      }
+
+      .petition-text,
+      .petition-heading {
+         width:60%;
+      }
+
+   	.thanks textarea {
+   		height:70px;
+   	}
+
+
+   	.mobile {
+   		display:none;
+   	}
+
+   	.form-wrap {
+   		min-height: 465px;
+         box-sizing:border-box;
+         -moz-box-sizing:border-box;
+   	}
+
+   	.fixed {
+   		position:fixed;
+   		top:0;
+   		max-width:280px;
+   		width: 280px;
+   	}
+
+      .relative {
+         position:relative;
+      }
+
+   	.donation .field {
+   		width: 46.054333765%;
+		  margin-left:2.2077922078%;
+   		display:inline-block;
+   	}
+
+   	.donation #amount_list {	
+   		padding:0;
+   	}
+
+   	.donation .amount-button {
+   		min-width:66px;
+   	}
+
+   }
+
+   @media (min-width:979px) {
+   	.fixed {
+   		width: 366px;
+   		max-width: 366px;
+   	}
+
+   	.donation #amount_list {	
+   		padding:0 15px;
+   	}
+
+   	.donation .amount-button {
+   		min-width:85px;
+   	}
+
+      .statement-leadin {
+         font-size:30px;
+         line-height:35px;
+      }
+   
+   }
+
+   @media (min-width:1200px){
+   	.right-form .form-wrap {
+   		max-width:300px;
+   	}
+
+   	h3.share-prompt {
+   		font-size:1.7em;
+   	}
+
+   	.fixed {
+   		min-width:458px;
+   	}
+
+   	.donation #amount_list {	
+   		padding:0 15px;
+   	}
+
+   	.donation .amount-button {
+   		min-width:70px;
+   	}
+   }
+
+

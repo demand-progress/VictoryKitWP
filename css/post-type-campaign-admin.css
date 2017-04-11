@@ -1,0 +1,9 @@
+.acf-row .performance-subject {
+    line-height: 28px;
+    opacity: 0.1;
+    transition: all 0.6s;
+}
+
+.acf-row .performance-subject.loaded {
+    opacity: 1;
+}

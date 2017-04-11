@@ -1,0 +1,31 @@
+/* Disable deletion of existing rows */
+.acf-repeater .acf-row:not(.new) .acf-row-handle.order {
+    pointer-events: none;
+}
+.acf-repeater .acf-row:not(.new) .acf-row-handle.remove a {
+    display: none !important;
+}
+
+/* Centering enabled checkboxes */
+.acf-field.acf-field-true-false.enabled {
+    text-align: center;
+}
+
+/* Email Preview */
+.preview-email {
+    font-size: 18px;
+    opacity: 0.5;
+    text-decoration: none;
+    transition: opacity 0.32s ease-out;
+}
+
+.preview-email.enabled {
+    opacity: 1;
+}
+
+.preview-email span {
+    font-size: 32px;
+    height: auto;
+    margin: 0 4px 0 0;
+    width: auto;
+}

@@ -1,0 +1,113 @@
+/*
+Theme Name:   VictoryKit
+Author:       Demand Progress
+Author URI:   https://demandprogress.org/
+Version:      1.0.0
+License:      Private
+*/
+
+/*
+Petition page
+*/
+
+.campaign-petition-preview {
+    background-color: #f0f0f0;
+    border-radius: 3px;
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(0, 0, 0, 0.25);
+    padding: 0 16px;
+}
+.form-wrap {
+    box-shadow: 0 0 12px rgba(0, 0, 0, 0.15);
+}
+.petition-text .padded {
+    padding-bottom: 28px;
+    padding-right: 14px;
+}
+input.blue-button, button.blue-button {
+    box-shadow: 0 0 8px rgba(0, 135, 255, 0.4);
+    height: 47px;
+    margin-left: 8px;
+    padding-top: 4px;
+    transition: 0.35s;
+    width: 119px;
+}
+input.blue-button:hover, button.blue-button:hover {
+    box-shadow: 0 0 16px rgba(0, 135, 255, 0.5);
+}
+input.blue-button:active, button.blue-button:active {
+    box-shadow: 0 0 8px rgba(0, 135, 255, 0.4);
+}
+#ak-errors {
+    animation: fadeIn ease-in 1;
+    animation-duration: 0.3s;
+    animation-fill-mode: forwards;
+    background-image: url(./legacy/static/images/nav.jpg);
+    background-size: cover;
+    margin-left: 0;
+    padding: 8px 12px;
+    opacity: 0;
+}
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+/*
+Fixes
+*/
+@media (min-width: 768px) {
+    #main {
+        margin: auto;
+    }
+}
+
+/*
+Thanks page
+*/
+
+body.thanks #main.inner-page .thanks-text .submitted-message {
+    font-size: 24px;
+    line-height: 1.3;
+}
+
+body.thanks #main.inner-page .thanks-text .share-buttons {
+    padding: 16px 0 0;
+    text-align: center;
+}
+
+body.thanks #main.inner-page .thanks-text .share-buttons a {
+    background-color: #09e;
+    border-radius: 10px;
+    color: #fff;
+    display: inline-block;
+    font-size: 32px;
+    line-height: 1.3;
+    margin: 0 8px 8px 0;
+    padding: 16px 32px;
+    transition: 0.2s;
+}
+
+body.thanks #main.inner-page .thanks-text .share-buttons a.facebook:hover {
+    background-color: #0af;
+}
+
+body.thanks #main.inner-page .thanks-text .share-buttons a.email {
+    background-color: #0d9;
+}
+
+body.thanks #main.inner-page .thanks-text .share-buttons a.email:hover {
+    background-color: #0ea;
+}
+
+body.thanks #main.inner-page .thanks-text .share-buttons a#donate-button {
+   background-color: #a12422;
+}
+
+body.thanks #main.inner-page .thanks-text .share-buttons a#donate-button:hover {
+   background-color: #b12933;
+}
