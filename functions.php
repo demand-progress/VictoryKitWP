@@ -2,7 +2,7 @@
 
 // Exit if accessed directly
 if(!defined('ABSPATH')) exit;
-
+require_once('../constants.php');
 require_once('addons/actionkit.php');
 require_once('addons/admin.php');
 require_once('addons/dashboard.php');
