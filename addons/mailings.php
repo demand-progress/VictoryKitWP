@@ -317,7 +317,6 @@ class Mailings {
 
     function requestMail($params, $html){
       global $ak;
-      var_dump($ak->request(array('path'=>'', 'data' => array(), 'method' => 'post')));
       $response = $ak->request(array(
           'path' => 'mailer',
           'method' => 'post',
