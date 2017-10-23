@@ -24,7 +24,7 @@ use PHPUnit\Framework\TestCase;
 final class RequestMethodTest extends TestCase
   {
     //Testing mailings requestMail function is returning value from ActionKit request method
-    public function testRequestMethodReturnsHeaders(): void
+    public function testActionkitAndMailingsRequestMethodReturnValue(): void
     {
       global $ak;
       $ak = $this->createMock(ActionKit::class);
@@ -39,7 +39,7 @@ final class RequestMethodTest extends TestCase
 
 // set up observer on ActionKit class request method to be called once from mailings class requestMailings method with
 //the same parameters
-    public function testActionkitRequestParams()
+    public function testActionkitAndMailingsRequestMethodParameters()
     {
         $params = array('from_line'=>'one', 'subject'=>'two', 'subscribers' =>'three', 'limit'=>'four');
         $html = '';
@@ -72,6 +72,49 @@ final class RequestMethodTest extends TestCase
 
         $mailings = new Mailings($ak);
         $mailings->requestMail($params, $html);
+    }
+    public function testrenderFunction()
+    {
+      global $ak;
+
+      $ak = $this->createMock(Mailings::class);
+      $ak ->method('render')
+         ->willReturn(
+'<table id="callout" style="border: 2px solid #777777; width: 220px; margin-bottom: 5px; margin-left: 8px; display: inline-block;" cellspacing="0" cellpadding="12" align="right" bgcolor="#ffffff">
+<tbody>
+<tr>
+<td>
+  <p style="margin: 0 auto; text-align: center;" align="center">two</p>
+  <div style="margin: 1em auto .5em;" align="center"><!--[if mso]>
+    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="http://stoppaydaypredators.org/RootStrikers/" style="height:40px;v-text-anchor:middle;width:180px;" arcsize="10%" strokecolor="#2b3a4a" fillcolor="#0099ff">
+      <w:anchorlock/>
+      <center style="color:#ffffff;font-family:sans-serif;font-size:14px;font-weight:bold;">ADD YOUR NAME!</center>
+    </v:roundrect>
+  <![endif]--> <a style="background-color: #0099ff; border: 1px solid #2b3a4a; border-radius: 7px; color: #ffffff; display: inline-block; font-family: sans-serif; font-size: 14px; font-weight: bold; line-height: 40px; text-align: center; text-decoration: none; width: 180px; -webkit-text-size-adjust: none; mso-hide: all;" href="four">SIGN NOW</a></div>
+</td>
+</tr>
+</tbody>
+</table>
+three
+one
+<p style="margin: 1em auto;">&nbsp;</p>
+<p style="margin-bottom: 2em auto; text-align: center;" align="center"><a href="four">two</a></p>
+<br/>
+
+<div style="margin: 1em auto;" align="center">
+  <!--[if mso]>
+    <v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="https://secure.actblue.com/contribute/page/rootstrikers-fin?refcode=footer" style="height:40px;v-text-anchor:middle;width:200px;" arcsize="10%" strokecolor="#1e3650" fillcolor="#ae0d18">
+      <w:anchorlock/>
+      <center style="color:#ffffff;font-family:sans-serif;font-size:14px;font-weight:bold;">DONATE</center>
+    </v:roundrect>
+  <![endif]-->
+  <a style="background-color: #ae0d18; border: 1px solid #1e3650; border-radius: 7px; color: #ffffff; display: inline-block; font-family: sans-serif; font-size: 14px; font-weight: bold; line-height: 40px; text-align: center; text-decoration: none; width: 200px; -webkit-text-size-adjust: none; mso-hide: all;" href="https://secure.actblue.com/contribute/page/demanding?refcode=footer&recurring=12">DONATE</a>
+</div>
+<!-- ak.wysiwyg=off -->');
+
+     $mailings = new Mailings();
+     $result = $mailings->render(array('body'=>'one', 'petition_headline'=>'two', 'salutation'=>'three', 'url' =>'four'));
+     $this->assertEquals( $ak->render(''), $result);
     }
   }
 
