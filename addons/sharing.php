@@ -8,8 +8,13 @@ class Sharing {
         // ...
     }
 
+    function queryResponse($sql){
+      global $ak;
+      return $ak->query($sql, true);
+    }
+
     function get_sharing_stats_from_ak($post_id) {
-        global $ak;
+
 
         // Request sources from AK
         $ak_page_id = get_post_meta($post_id, 'ak_page_id', true);
@@ -26,7 +31,7 @@ class Sharing {
             GROUP BY
                 tbl.source
         ";
-        $response = $ak->query($sql, true);
+        $response = queryResponse($sql);
 
         // Initialize each variant with a count of zero
         $variants = array(
