@@ -16,9 +16,24 @@ function queryResponse(){
 
 function get_fields(){}
 
+class wpdb {
+  function prepare(){}
+  function get_results(){
+    return array();
+  }
+}
+
+class wpdbWithValues {
+  function prepare(){}
+  function get_results(){
+    return array('type' => 4, 'variant' => 4, 'views' => 4, 'convverstions' => 4);
+  }
+}
+
+// $results =
 use PHPUnit\Framework\TestCase;
 
-final class RequestMethodTest extends TestCase
+final class SharingTest extends TestCase
   {
     public function testSharingQueryFunction(): void
     {
@@ -68,4 +83,46 @@ final class RequestMethodTest extends TestCase
       $returnValue = $statTest->get_sharing_stats_from_ak('');
       $this->assertEquals($returnValue, array('sd'=>array(), 'si'=>array(), 'st'=>array()));
     }
-  }
+    // public function testGet_sharing_stats_from_akFieldsSet(): void
+    // {
+    //   $sharing= $this->createMock(Sharing::class);
+    //   $sharing->method('get_sharing_stats_from_ak');
+    //   $sharing->$fields = array('share_descriptions' => '');
+    //
+    //   $statTest = new Sharing($sharing);
+    //   $returnValue = $statTest->get_sharing_stats_from_ak('');
+    //   print_r($returnValue);
+    //   $this->assertEquals($returnValue, array('sd'=>array(), 'si'=>array(), 'st'=>array()));
+    // }
+    public function testGetSharingPerformanceFunction(): void
+    {
+      global $wpdb;
+      $wpdb = new wpdb;
+
+      $params = array('post_id'=>'');
+
+      $sharingPerformanceTest = new Sharing();
+      $result = $sharingPerformanceTest->get_sharing_performance($params);
+      $this->assertEquals( array(
+          'share_descriptions' => array(),
+          'share_images' => array(),
+          'share_titles' => array(),
+      ), $result);
+    }
+    public function testGetSharingPerformanceFunctionWithResultsArray(): void
+    {
+      global $wpdb;
+      $wpdb = new wpdbWithValues;
+
+      $params = array('post_id'=>'');
+
+      $sharingPerformanceTest = new Sharing();
+      $result = $sharingPerformanceTest->get_sharing_performance($params);
+      $this->assertEquals( array(
+          'share_descriptions' => array(),
+          'share_images' => array(),
+          'share_titles' => array(),
+          '' => array(''=>array('views'=> 0, 'conversions' => 0))
+      ), $result);
+    }
+}
