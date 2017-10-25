@@ -26,7 +26,7 @@ class wpdb {
 class wpdbWithValues {
   function prepare(){}
   function get_results(){
-    return array('type' => 4, 'variant' => 4, 'views' => 4, 'convverstions' => 4);
+    return array('type' => 4, 'variant' => 4, 'views' => 4, 'converstions' => 4);
   }
 }
 
@@ -43,8 +43,14 @@ final class SharingTest extends TestCase
          ->willReturn('');
 
       $statTest = new Sharing();
-      $result = $statTest->queryResponse($ak, "");
-      $this->assertEquals( $ak->query("", true), $result);
+      $result = $statTest->queryResponse($ak);
+      $this->assertEquals( $ak->query(""), $result);
+    }
+    public function testSharingQueryFunctionWithParametersPassed(): void
+    {
+      $sharingQueryTest = new Sharing();
+      $result = $sharingQueryTest->queryResponse($ak);
+      $this->assertEquals( '', $result);
     }
 
     public function testSharingQueryFunctionParameters(): void
