@@ -9,6 +9,9 @@ function get_option(){}
 function add_action(){}
 function update_option(){}
 
+class wordPress {
+  function query(){}
+};
 
 use PHPUnit\Framework\TestCase;
 
@@ -35,14 +38,32 @@ final class RequestMethodTest extends TestCase
       $this->assertEquals( 0, $result);
      }
 
-     public function testVkMailingsUpdateSubscribedReturnValueFour(): void
-      {
-        global $ak;
-        $ak = $this->createMock(ActionKit::class);
-        $ak->method('query')
-           ->willReturn(array('success' => true, 'data' => array('user_count' => 4)));
+    //  public function testVkMailingsUpdateSubscribedReturnValueFour(): void
+    //   {
+    //     global $ak;
+    //     $ak = $this->createMock(ActionKit::class);
+    //     $ak->method('query')
+    //        ->willReturn(array('success' => true, 'data' => array('user_count' => 4)));
+     //
+    //    $result = vk_mailings_update_subscribed_users_count_action($ak);
+    //    $this->assertEquals( 4, $result);
+    //   }
+    //   public function testUpdateOptionFunction(): void
+    //    {
+    //     $result = updateOption(0);
+    //     $this->assertEquals( 4, $result);
+    //    }
+    public function testVkMailingsSyncSubscribersAction(): void
+     {
+       global $ak;
+       global $wpdb;
+       $wpdb = new wordPress;
 
-       $result = vk_mailings_update_subscribed_users_count_action($ak);
-       $this->assertEquals( 4, $result);
-      }
+       $ak = $this->createMock(ActionKit::class);
+       $ak->method('query')
+          ->willReturn(array('data'=>array(array('user_id' => 4), array('user_id' => 5), array('user_id' => 6))));
+
+      $result = vk_mailings_sync_subscribers_action($ak);
+      $this->assertEquals( array(0 => array( 0 => 4, 1 => 5, 2 => 6)), $result);
+     }
   }
