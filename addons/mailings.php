@@ -417,6 +417,22 @@ add_action('vk_mailings_update_subscribed_users_count', 'vk_mailings_update_subs
 // Update VictoryKit subscriber database from ActionKit subscriber database
 //   Run once a day at 6:15am
 //   TODO: Really have to truncate every time? Isnt this going to be big and slow?
+function insertSubscriberTodb($id_chunks, $wpdb){
+  $values = array();
+    foreach ($id_chunks as $ids) {
+        $ids = '(' . join('), (', $ids) . ')';
+        $values['results'] = $ids;
+        $sql = "
+        INSERT INTO vk_subscriber
+        (ak_user_id)
+        VALUES
+        $ids;
+        ";
+        $wpdb->query($sql);
+    }
+  return $values;
+}
+
 function vk_mailings_sync_subscribers_action() {
     // Get all subscribers...
     global $ak, $wpdb;
@@ -442,16 +458,10 @@ function vk_mailings_sync_subscribers_action() {
 
     // Insert into VK table
     $id_chunks = array_chunk($ids, 1000);
-    foreach ($id_chunks as $ids) {
-        $ids = '(' . join('), (', $ids) . ')';
-        $sql = "
-        INSERT INTO vk_subscriber
-        (ak_user_id)
-        VALUES
-        $ids;
-        ";
-        $wpdb->query($sql);
-    }
+
+    insertSubscriberTodb($id_chunks, $wpdb);
+
+    return $id_chunks;
 }
 add_action('vk_mailings_sync_subscribers', 'vk_mailings_sync_subscribers_action');
 
