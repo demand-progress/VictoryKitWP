@@ -66,4 +66,13 @@ final class RequestMethodTest extends TestCase
       $result = vk_mailings_sync_subscribers_action($ak);
       $this->assertEquals( array(0 => array( 0 => 4, 1 => 5, 2 => 6)), $result);
      }
+   public function testInsertSubscriberTodb(): void
+    {
+      global $wpdb;
+      $wpdb = new wordPress;
+      $id_chunks = array(0 => array( 0 => 4, 1 => 5, 2 => 6));
+
+     $result = insertSubscriberTodb($id_chunks, $wpdb);
+     $this->assertEquals( array('results' => '(4), (5), (6)'), $result);
+    }
   }
