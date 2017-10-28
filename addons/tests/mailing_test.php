@@ -21,6 +21,29 @@ use PHPUnit\Framework\TestCase;
 
 final class RequestMethodTest extends TestCase
   {
+    public function testGetMailingsStatsFromAkQueryMethod()
+    {
+      global $ak;
+      $ak = $this->createMock(ActionKit::class);
+      $ak->expects($this->exactly(3))
+          ->method('query')
+          ->willReturn(array('data' => array('conversions' => '', 'losses' => '', 'sent' => '')));
+
+      $mailingsTest = new Mailings($ak);
+      $result = $mailingsTest->get_mailing_stats_from_ak('');
+    }
+    public function testGetMailingsStatsFromAkReturnValue()
+    {
+      global $ak;
+      $ak = $this->createMock(ActionKit::class);
+      $ak->expects($this->exactly(3))
+          ->method('query')
+          ->willReturn(array('data' => array('conversions' => 'one', 'losses' => 'two', 'sent' => 'three')));
+
+      $mailingsTest = new Mailings($ak);
+      $result = $mailingsTest->get_mailing_stats_from_ak('');
+      $this->assertEquals(array('conversions' => 'one', 'losses' => 'two', 'sent' => 'three'), $result);
+    }
 //Testing mailings requestMail function is returning value from ActionKit request method
     public function testActionkitAndMailingsRequestMethodReturnValue(): void
     {
