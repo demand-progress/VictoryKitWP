@@ -388,10 +388,6 @@ class Mailings {
 
 // Update total count of subscribers in VictoryKit list
 //   Run every 12 hours
-function updateOption($count){
-  return update_option('subscribed_users', $count);
-}
-
 function vk_mailings_update_subscribed_users_count_action() {
     global $ak;
     $sql = "
@@ -409,7 +405,7 @@ function vk_mailings_update_subscribed_users_count_action() {
         $count = 0;
     }
 
-    updateOption($count);
+    update_option('subscribed_users', $count);
     return $count;
 }
 add_action('vk_mailings_update_subscribed_users_count', 'vk_mailings_update_subscribed_users_count_action');
