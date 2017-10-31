@@ -5,7 +5,7 @@ define('ABSPATH', 1);
 require_once(__DIR__. '/../actionkit.php');
 require_once(__DIR__. '/../mailings.php');
 
-function get_option($one){}
+function get_option(){}
 
 function add_action($one, $two){}
 
@@ -17,10 +17,48 @@ function wp_remote_post($one, $two){
    return array('header'=> getAll(), 'response' => array('code' => ''));
 }
 
+
+
 use PHPUnit\Framework\TestCase;
 
 final class RequestMethodTest extends TestCase
   {
+    public function testGetDistributionsGetOptionsMocked()
+    {
+      global $wp;
+
+      $wp = $this->createMock(WordPress::class);
+      $wp ->expects($this->once())
+                   ->method('getOptions')
+                   ->willReturn(0);
+
+      $mailingsFunc = new Mailings();
+
+      $result = $mailingsFunc->get_distributions();
+      $this->assertEquals(array('campaigns' => array(), 'overall' => array()), $result);
+    }
+
+    public function testGetDistributions()
+    {
+      global $wp;
+      $object = (object) array(
+        'posts' => array('campaigns' => array('ID'=>array()))
+      );
+
+      $wp = $this->createMock(WordPress::class);
+      $wp ->expects($this->once())
+                   ->method('getOptions')
+                   ->willReturn(1);
+  //this isn't working
+      $wp ->expects($this->once())
+                   ->method('wordPressQuery')
+                   ->willReturn($object);
+
+      $mailingsFunc = new Mailings();
+
+      $mailingsFunc->get_distributions();
+    }
+
     public function testGetMailingsStatsFromAkQueryMethod()
     {
       global $ak;
