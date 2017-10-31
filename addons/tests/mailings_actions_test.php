@@ -94,4 +94,23 @@ final class RequestMethodTest extends TestCase
 
         vk_mailings_update_mailing_stats_action();
      }
+     public function testVkMailingsCreateNewMailingsAction(): void
+      {
+        global $wpdb;
+        global $vk_mailings;
+
+        $wpdb = $this->createMock(WordPress::class);
+        $wpdb->expects($this->once())
+             ->method('get_col')
+             ->willReturn(array('one', 'two', 'three', 'four'));
+
+        $wpdb->expects($this->exactly(4))
+              ->method('update');
+
+        $vk_mailings = $this->createMock(Mailings::class);
+        $vk_mailings->expects($this->exactly(4))
+                    ->method('get_mailing_stats_from_ak');
+
+         vk_mailings_update_mailing_stats_action();
+      }
   }
