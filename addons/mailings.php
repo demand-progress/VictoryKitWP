@@ -3,7 +3,7 @@
 // Exit if accessed directly
 if(!defined('ABSPATH')) exit;
 require_once(__DIR__. '/../constants.php');
-
+require_once(__DIR__. '/wordpress.php');
 // Display errors
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -18,23 +18,21 @@ class Mailings {
     function get_distributions()
     {
         global $wpdb;
+        global $wp;
 
-        if (!get_option('subscribed_users')) {
+        if (!$wp->getOptions('subscribed_users')) {
           // no subscribed users in DB yet
           return array('campaigns' => array(), 'overall' => array());
         }
 
         // Get active campaigns
         $campaigns = array();
-        $results = new WP_Query(array(
-            'post_type' => 'campaign',
-            'post_status' => 'publish',
-        ));
+        $results = $wp->wordPressQuery();
         foreach ($results->posts as $campaign) {
             $id = $campaign->ID;
             $campaigns[$id] = array(
                 'conversions' => 0,
-                'fields' => get_fields($id),
+                'fields' => $wp->getFields($id),
                 'id' => $id,
                 'losses' => 0,
                 'sent' => 0,
