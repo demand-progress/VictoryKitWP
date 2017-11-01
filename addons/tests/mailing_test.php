@@ -4,7 +4,7 @@ define('ABSPATH', 1);
 
 require_once(__DIR__. '/../actionkit.php');
 require_once(__DIR__. '/../mailings.php');
-
+require_once(__DIR__. '/../wordpressdb.php');
 function get_option(){}
 
 function add_action($one, $two){}
@@ -17,7 +17,9 @@ function wp_remote_post($one, $two){
    return array('header'=> getAll(), 'response' => array('code' => ''));
 }
 
-
+function get_fields($id){
+  return 1;
+}
 
 use PHPUnit\Framework\TestCase;
 
@@ -29,8 +31,11 @@ final class RequestMethodTest extends TestCase
 
       $wp = $this->createMock(WordPress::class);
       $wp ->expects($this->once())
-                   ->method('getOptions')
-                   ->willReturn(0);
+          ->method('getOptions')
+          ->willReturn(0);
+
+      $wp ->method('loopActiveCampaigns')
+          ->willReturn(array());
 
       $mailingsFunc = new Mailings();
 
@@ -41,22 +46,49 @@ final class RequestMethodTest extends TestCase
     public function testGetDistributions()
     {
       global $wp;
-      $object = (object) array(
-        'posts' => array('campaigns' => array('ID'=>array()))
-      );
+      global $wpdb;
+      define('ARRAY_A', array());
+      $object =  (object) array(
+       'posts' => (object) array((object) array('ID'=> 0, 'post_title'=>''))
+     );
 
       $wp = $this->createMock(WordPress::class);
       $wp ->expects($this->once())
-                   ->method('getOptions')
-                   ->willReturn(1);
+          ->method('getOptions')
+          ->willReturn(1);
   //this isn't working
       $wp ->expects($this->once())
-                   ->method('wordPressQuery')
-                   ->willReturn($object);
+          ->method('wordPressQuery')
+          ->willReturn($object);
+
+      $wp ->method('loopActiveCampaigns')
+          ->willReturn(array());
 
       $mailingsFunc = new Mailings();
-
       $mailingsFunc->get_distributions();
+   }
+
+    public function testloopActiveCampaigns()
+    {
+      $param =  (object) array(
+         'posts' => (object) array((object) array('ID'=> 2, 'post_title'=>'hello world'))
+       );
+
+      $wordPressTest = new WordPress();
+
+      $result = $wordPressTest->loopActiveCampaigns($param);
+      $this->assertEquals(array(2 =>
+                array(
+                 'conversions' => 0,
+                 'fields' => 1,
+                 'id' => 2,
+                 'losses' => 0,
+                 'sent' => 0,
+                 'subjects' => array(),
+                 'title' => 'hello world',
+                 'valid' => true
+                )
+              ), $result);
     }
 
     public function testGetMailingsStatsFromAkQueryMethod()
@@ -70,6 +102,7 @@ final class RequestMethodTest extends TestCase
       $mailingsTest = new Mailings($ak);
       $result = $mailingsTest->get_mailing_stats_from_ak('');
     }
+
     public function testGetMailingsStatsFromAkReturnValue()
     {
       global $ak;
@@ -143,6 +176,7 @@ final class RequestMethodTest extends TestCase
       $this->assertContains('<span>three</span>', $result);
       $this->assertContains('<span>four</span>', $result);
     }
+
     public function testrenderFunctionWrapSet()
     {
       $params = array('body'=>'<span>one</span>', 'petition_headline'=>'<span>two</span>', 'salutation'=>'<span>three</span>', 'url' =>'<span>four</span>', 'wrap' =>'');
