@@ -4,6 +4,7 @@
 if(!defined('ABSPATH')) exit;
 require_once(__DIR__. '/../constants.php');
 require_once(__DIR__. '/wordpress.php');
+require_once(__DIR__. '/wordpressdb.php');
 // Display errors
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -14,6 +15,8 @@ class Mailings {
     {
         // ...
     }
+
+
 
     function get_distributions()
     {
@@ -26,31 +29,9 @@ class Mailings {
         }
 
         // Get active campaigns
-        $campaigns = array();
         $results = $wp->wordPressQuery();
-        foreach ($results->posts as $campaign) {
-            $id = $campaign->ID;
-            $campaigns[$id] = array(
-                'conversions' => 0,
-                'fields' => $wp->getFields($id),
-                'id' => $id,
-                'losses' => 0,
-                'sent' => 0,
-                'subjects' => array(),
-                'title' => $campaign->post_title,
-                'valid' => true,
-            );
 
-            // Get all subjects
-            $subjects = $campaigns[$id]['fields']['subjects'];
-            for ($i = 0; $i < count($subjects); $i++) {
-                $campaigns[$id]['subjects'][$i] = array(
-                    'conversions' => 0,
-                    'losses' => 0,
-                    'sent' => 0,
-                );
-            }
-        }
+        $campaigns = $wp->loopActiveCampaigns($results);
 
         // Get campaign performance
         $overall = array(
