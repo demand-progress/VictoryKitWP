@@ -76,7 +76,7 @@ final class RequestMethodTest extends TestCase
           ->willReturn(0);
 
       $wp = new WordPress($wpdb);
-      $result = $wp->loopActiveCampaigns($param);
+      $result = $wp->loopActiveCampaigns($param, $wpdb);
 
       $this->assertSame(array(2 =>
                 array(
