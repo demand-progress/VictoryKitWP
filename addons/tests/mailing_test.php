@@ -17,10 +17,6 @@ function wp_remote_post($one, $two){
    return array('header'=> getAll(), 'response' => array('code' => ''));
 }
 
-function get_fields($id){
-  return 1;
-}
-
 use PHPUnit\Framework\TestCase;
 
 final class RequestMethodTest extends TestCase
@@ -70,23 +66,28 @@ final class RequestMethodTest extends TestCase
 
     public function testloopActiveCampaigns()
     {
+      global $wpdb;
       $param =  (object) array(
          'posts' => (object) array((object) array('ID'=> 2, 'post_title'=>'hello world'))
        );
+      $wpdb = $this->createMock(WordPressDb::class);
+      $wpdb ->expects($this->once())
+          ->method('getFields')
+          ->willReturn(0);
 
-      $wordPressTest = new WordPress();
+      $wp = new WordPress($wpdb);
+      $result = $wp->loopActiveCampaigns($param);
 
-      $result = $wordPressTest->loopActiveCampaigns($param);
-      $this->assertEquals(array(2 =>
+      $this->assertSame(array(2 =>
                 array(
                  'conversions' => 0,
-                 'fields' => 1,
+                 'fields' => 0,
                  'id' => 2,
                  'losses' => 0,
                  'sent' => 0,
                  'subjects' => array(),
                  'title' => 'hello world',
-                 'valid' => true
+                 'valid' => true,
                 )
               ), $result);
     }
