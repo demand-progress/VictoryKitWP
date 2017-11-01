@@ -31,7 +31,7 @@ class Mailings {
         // Get active campaigns
         $results = $wp->wordPressQuery();
 
-        $campaigns = $wp->loopActiveCampaigns($results);
+        $campaigns = $wp->loopActiveCampaigns($results, $wpdb);
 
         // Get campaign performance
         $overall = array(
