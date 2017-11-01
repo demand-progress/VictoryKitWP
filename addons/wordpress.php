@@ -19,10 +19,8 @@ function wordPressQuery()
 
 
 
-function loopActiveCampaigns($results)
+function loopActiveCampaigns($results, $wpdb)
  {
-   global $wpdb;
-
     $campaigns = array();
     foreach ($results->posts as $campaign) {
         $id = $campaign->ID;
