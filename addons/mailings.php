@@ -39,43 +39,10 @@ class Mailings {
             'losses' => 0,
             'sent' => 0,
         );
-        $mailings = $wpdb->get_results('
-            SELECT
-                vkm.campaign_id,
-                vkm.variation_subject,
-                SUM(vkm.conversions) as conversions,
-                SUM(vkm.losses) as losses,
-                SUM(vkm.sent) as sent
-            FROM
-                vk_mailing AS vkm
-            GROUP BY
-                vkm.campaign_id, vkm.variation_subject
-        ', ARRAY_A);
 
-        foreach ($mailings as $mailing) {
-            $id = $mailing['campaign_id'];
+        $mailings = $wpdb->getResults($wpdb);
 
-            // Make sure to only include currently published campaigns in overall data
-            // TODO: why not just check for campaign published in query above?
-            if (!isset($campaigns[$id])) {
-                continue;
-            }
-
-            $overall['conversions'] += $mailing['conversions'];
-            $overall['losses'] += $mailing['losses'];
-            $overall['sent'] += $mailing['sent'];
-
-            $campaigns[$id]['conversions'] += $mailing['conversions'];
-            $campaigns[$id]['losses'] += $mailing['losses'];
-            $campaigns[$id]['sent'] += $mailing['sent'];
-
-            $subject = $mailing['variation_subject'];
-            $campaigns[$id]['subjects'][$subject] = array(
-                'conversions' => +$mailing['conversions'],
-                'losses' => +$mailing['losses'],
-                'sent' => +$mailing['sent'],
-            );
-        }
+        $wp->mailingStats($mailings, $campaigns, $overall);
 
         // This allows brand new campaigns to have a chance to succeed.
         // It probably is not needed if we are going to be sending each new campaign to more than several hundred people,
