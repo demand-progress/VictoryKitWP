@@ -43,7 +43,8 @@ final class RequestMethodTest extends TestCase
     {
       global $wp;
       global $wpdb;
-      define('ARRAY_A', array());
+
+      define('ARRAY_A', 'Array_A');
       $object =  (object) array(
        'posts' => (object) array((object) array('ID'=> 0, 'post_title'=>''))
      );
@@ -59,6 +60,11 @@ final class RequestMethodTest extends TestCase
 
       $wp ->method('loopActiveCampaigns')
           ->willReturn(array());
+
+      $wpdb = $this->createMock(WordPressDb::class);
+      $wpdb ->expects($this->once())
+            ->method('getResults')
+            ->willReturn(array(''=>array('campaign_id'=>'')));
 
       $mailingsFunc = new Mailings();
       $mailingsFunc->get_distributions();
@@ -91,6 +97,39 @@ final class RequestMethodTest extends TestCase
                 )
               ), $result);
     }
+    public function testGet_distributionsWPMailingStatsNoCampaignId()
+    {
+      $wp = new WordPress();
+      $result = $wp->mailingStats(array(array('campaign_id'=>0)), array('noId' => null), '');
+      $this->assertSame(array('campaign'=>array('noId' => null), 'overall' =>''), $result);
+    }
+
+    public function testGet_distributionsWPMailingStatsCampaignId()
+    {
+      $wp = new WordPress();
+      $result = $wp->mailingStats(array(array('campaign_id'=>0)), array('id' => array()), '');
+      // print_r($result);
+      // $this->assertSame(array(), $result);
+    }
+
+    // public function testGet_distributionsWPDBGet_resultFunction()
+    // {
+    //   global $wpdb;
+    //   global $wp;
+    //
+    //   $wp= $this->createMock(WordPress::class);
+    //   $wp ->expects($this->once())
+    //         ->method('getOptions')
+    //         ->willReturn(1);
+    //
+    //   $wpdb = $this->createMock(WordPressDb::class);
+    //   $wpdb ->expects($this->once())
+    //         ->method('getResults')
+    //         ->willReturn(array(''=>array('campaign_id'=>'')));
+    //
+    //   $mailingsFunc = new Mailings($wpdb);
+    //   $mailingsFunc->get_distributions();
+    // }
 
     public function testGetMailingsStatsFromAkQueryMethod()
     {
