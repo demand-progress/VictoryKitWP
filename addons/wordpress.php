@@ -49,6 +49,7 @@ function loopActiveCampaigns($results, $wpdb)
 
   function mailingStats($mailings, $campaigns, $overall){
     $results = array();
+
       foreach ($mailings as $mailing) {
           $id = $mailing['campaign_id'];
 
@@ -73,8 +74,8 @@ function loopActiveCampaigns($results, $wpdb)
               'sent' => +$mailing['sent'],
           );
       }
-      $results['campaign'] = $campaigns;
-      $results['overall'] = $overall;
+      $results['campaign_result'] = $campaigns;
+      $results['overall_result'] = $overall;
       return $results;
    }
 }
