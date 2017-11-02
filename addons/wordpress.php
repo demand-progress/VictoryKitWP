@@ -78,6 +78,17 @@ function loopActiveCampaigns($results, $wpdb)
       $results['overall_result'] = $overall;
       return $results;
    }
+
+   function boost($overall){
+     $boost = 500.0;
+     $overall['boost'] = $boost;
+
+     // Overall rate
+     $overall['rate'] = ($overall['conversions'] - $overall['losses'] + $boost) / ($overall['sent'] + $boost);
+     if ($overall['rate'] < 0) {
+         $overall['rate'] = 0; // TODO: why would we not track negative results?
+     }
+   }
 }
 
 function wp() {
