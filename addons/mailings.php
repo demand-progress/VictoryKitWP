@@ -48,14 +48,7 @@ class Mailings {
         // It probably is not needed if we are going to be sending each new campaign to more than several hundred people,
         // but it helps for testing with smaller amounts of people because it basically starts off the campaign at the same
         // rate as the overall campaign success rate and slightly adjusts from there
-        $boost = 500.0;
-        $overall['boost'] = $boost;
-
-        // Overall rate
-        $overall['rate'] = ($overall['conversions'] - $overall['losses'] + $boost) / ($overall['sent'] + $boost);
-        if ($overall['rate'] < 0) {
-            $overall['rate'] = 0; // TODO: why would we not track negative results?
-        }
+        $wp->boost($overall);
 
         // Calculate shares
         $campaign_rate_sum = 0;
