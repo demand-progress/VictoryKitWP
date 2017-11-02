@@ -46,6 +46,37 @@ function loopActiveCampaigns($results, $wpdb)
       }
      return $campaigns;
   }
+
+  function mailingStats($mailings, $campaigns, $overall){
+    $results = array();
+      foreach ($mailings as $mailing) {
+          $id = $mailing['campaign_id'];
+
+          // Make sure to only include currently published campaigns in overall data
+          // TODO: why not just check for campaign published in query above?
+          if (!isset($campaigns[$id])) {
+              continue;
+          }
+
+          $overall['conversions'] += $mailing['conversions'];
+          $overall['losses'] += $mailing['losses'];
+          $overall['sent'] += $mailing['sent'];
+
+          $campaigns[$id]['conversions'] += $mailing['conversions'];
+          $campaigns[$id]['losses'] += $mailing['losses'];
+          $campaigns[$id]['sent'] += $mailing['sent'];
+
+          $subject = $mailing['variation_subject'];
+          $campaigns[$id]['subjects'][$subject] = array(
+              'conversions' => +$mailing['conversions'],
+              'losses' => +$mailing['losses'],
+              'sent' => +$mailing['sent'],
+          );
+      }
+      $results['campaign'] = $campaigns;
+      $results['overall'] = $overall;
+      return $results;
+   }
 }
 
 function wp() {
