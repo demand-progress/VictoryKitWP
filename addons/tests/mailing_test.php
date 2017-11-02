@@ -101,15 +101,19 @@ final class RequestMethodTest extends TestCase
     {
       $wp = new WordPress();
       $result = $wp->mailingStats(array(array('campaign_id'=>0)), array('noId' => null), '');
-      $this->assertSame(array('campaign'=>array('noId' => null), 'overall' =>''), $result);
+      $this->assertSame(array('campaign_result'=>array('noId' => null), 'overall_result' =>''), $result);
     }
 
     public function testGet_distributionsWPMailingStatsCampaignId()
     {
+      $mailings = array(array('campaign_id'=> 0, 'conversions' => 10, 'losses' => 10, 'sent' => 10, 'variation_subject' => 'hello'));
+      $campaigns = array(0 => array('conversions' => 0, 'losses' => 0, 'sent' => 0, 'subjects' => array()));
+      $overall = array('conversions' => 0, 'losses' => 0,'sent' => 0,);
       $wp = new WordPress();
-      $result = $wp->mailingStats(array(array('campaign_id'=>0)), array('id' => array()), '');
-      // print_r($result);
-      // $this->assertSame(array(), $result);
+      $result = $wp->mailingStats($mailings, $campaigns, $overall);
+      $this->assertSame(array('campaign_result' => array(0 => array('conversions' => 10, 'losses' => 10, 'sent' => 10, 'subjects' =>
+                        array('hello' => array('conversions' => 10, 'losses' => 10, 'sent' => 10)))), 'overall_result' => Array('conversions'=> 10, 'losses' => 10, 'sent' => 10))
+                                , $result);
     }
 
     // public function testGet_distributionsWPDBGet_resultFunction()
