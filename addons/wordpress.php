@@ -95,7 +95,7 @@ function loopActiveCampaigns($results, $wpdb)
       return $results;
    }
 
-   function calculate_shares($campaigns){
+   function calculate_shares($campaigns, $overall, $boost){
      $results = array();
      $campaign_rate_sum = 0;
      foreach ($campaigns as $campaign_index => &$campaign) {
