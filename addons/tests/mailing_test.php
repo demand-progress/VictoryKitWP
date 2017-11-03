@@ -14,7 +14,12 @@ function getAll(){
 }
 
 function wp_remote_post($one, $two){
-   return array('header'=> getAll(), 'response' => array('code' => ''));
+   return array(
+            'header'=> getAll(),
+            'response' =>
+              array(
+                'code' => '')
+            );
 }
 
 define('ARRAY_A', 'Array_A');
@@ -47,8 +52,13 @@ final class RequestMethodTest extends TestCase
       global $wpdb;
 
       $object =  (object) array(
-       'posts' => (object) array((object) array('ID'=> 0, 'post_title'=>''))
-     );
+                          'posts' => (object)
+                            array((object)
+                              array(
+                                'ID'=> 0,
+                                'post_title'=>'')
+                              )
+                          );
 
       $wp = $this->createMock(WordPress::class);
       $wp ->expects($this->once())
@@ -65,8 +75,10 @@ final class RequestMethodTest extends TestCase
       $wpdb = $this->createMock(WordPressDb::class);
       $wpdb ->expects($this->once())
             ->method('getResults')
-            ->willReturn(array(''=>array('campaign_id'=>'')));
-
+            ->willReturn(array(''=>
+                          array('campaign_id'=>'')
+                          )
+                        );
       $mailingsFunc = new Mailings();
       $mailingsFunc->get_distributions();
    }
@@ -75,77 +87,218 @@ final class RequestMethodTest extends TestCase
     {
       global $wpdb;
       $param =  (object) array(
-         'posts' => (object) array((object) array('ID'=> 2, 'post_title'=>'hello world'))
-       );
+                          'posts' => (object)
+                            array((object)
+                              array(
+                                'ID'=> 2,
+                                'post_title'=>'hello world')
+                            )
+                      );
       $wpdb = $this->createMock(WordPressDb::class);
       $wpdb ->expects($this->once())
           ->method('getFields')
-          ->willReturn(array('subjects' => array('one', 'two', 'three')));
-
+          ->willReturn(array(
+                        'subjects' =>
+                          array(
+                            'one',
+                            'two',
+                            'three')
+                          )
+                        );
       $wp = new WordPress($wpdb);
       $result = $wp->loopActiveCampaigns($param, $wpdb);
 
       $this->assertSame(array(2 =>
-                array(
-                 'conversions' => 0,
-                 'fields' => array('subjects' => array('one', 'two', 'three')),
-                 'id' => 2,
-                 'losses' => 0,
-                 'sent' => 0,
-                 'subjects' => array(
-                            0 => array('conversions' => 0, 'losses' => 0, 'sent' => 0),
-                            1 => array('conversions' => 0, 'losses' => 0, 'sent' => 0),
-                            2 => array('conversions' => 0, 'losses' => 0, 'sent' => 0)),
-                 'title' => 'hello world',
-                 'valid' => true,
-                )
-              ), $result);
+                          array(
+                           'conversions' => 0,
+                           'fields' => array(
+                                        'subjects' =>
+                                          array(
+                                            'one',
+                                            'two',
+                                            'three')
+                                          ),
+                           'id' => 2,
+                           'losses' => 0,
+                           'sent' => 0,
+                           'subjects' => array(
+                                          0 => array(
+                                                'conversions' => 0,
+                                                'losses' => 0,
+                                                'sent' => 0),
+                                          1 => array(
+                                                'conversions' => 0,
+                                                'losses' => 0,
+                                                'sent' => 0),
+                                          2 => array(
+                                                'conversions' => 0,
+                                                'losses' => 0,
+                                                'sent' => 0)),
+                           'title' => 'hello world',
+                           'valid' => true,
+                          )
+                        ), $result
+                      );
     }
     public function testGet_distributionsWPMailingStatsNoCampaignId()
     {
       $wp = new WordPress();
-      $result = $wp->mailingStats(array(array('campaign_id'=>0)), array('noId' => null), '');
-      $this->assertSame(array('campaign_result'=>array('noId' => null), 'overall_result' =>''), $result);
+      $result = $wp->mailingStats(array(
+                                    array(
+                                     'campaign_id'=>0)),
+                                        array(
+                                          'noId' => null), '');
+      $this->assertSame(array(
+                        'campaign_result'=> array(
+                                            'noId' => null
+                                            ),'overall_result' =>''), $result);
     }
 
     public function testGet_distributionsWPMailingStatsCampaignId()
     {
-      $mailings = array(array('campaign_id'=> 0, 'conversions' => 10, 'losses' => 10, 'sent' => 10, 'variation_subject' => 'hello'));
-      $campaigns = array(0 => array('conversions' => 0, 'losses' => 0, 'sent' => 0, 'subjects' => array()));
-      $overall = array('conversions' => 0, 'losses' => 0,'sent' => 0,);
+      $mailings = array(
+                    array(
+                      'campaign_id'=> 0,
+                      'conversions' => 10,
+                      'losses' => 10,
+                      'sent' => 10,
+                      'variation_subject' => 'hello')
+                    );
+      $campaigns = array(
+                    0 => array(
+                      'conversions' => 0,
+                      'losses' => 0,
+                      'sent' => 0,
+                      'subjects' => array(
+
+                        )
+                      )
+                    );
+      $overall = array(
+                  'conversions' => 0,
+                  'losses' => 0,
+                  'sent' => 0,
+                );
       $wp = new WordPress();
       $result = $wp->mailingStats($mailings, $campaigns, $overall);
-      $this->assertSame(array('campaign_result' => array(0 => array('conversions' => 10, 'losses' => 10, 'sent' => 10, 'subjects' =>
-                        array('hello' => array('conversions' => 10, 'losses' => 10, 'sent' => 10)))), 'overall_result' => Array('conversions'=> 10, 'losses' => 10, 'sent' => 10))
-                                , $result);
+      $this->assertSame(array(
+                        'campaign_result' => array(
+                         0 => array(
+                              'conversions' => 10,
+                              'losses' => 10,
+                              'sent' => 10,
+                              'subjects' => array(
+                                  'hello' => array(
+                                    'conversions' => 10,
+                                    'losses' => 10,
+                                    'sent' => 10)
+                                  )
+                                )
+                              ),
+                              'overall_result' => array(
+                                'conversions'=> 10,
+                                'losses' => 10,
+                                'sent' => 10)
+                              ), $result);
     }
 
     public function testBoostFunction()
     {
-      $overall = Array('conversions'=> 10, 'losses' => 10, 'sent' => 10);
+      $overall = array(
+                  'conversions'=> 10,
+                  'losses' => 10,
+                  'sent' => 10
+                );
       $boost = 500;
       $wp = new WordPress();
       $result = $wp->boost($overall, $boost);
-      $this->assertSame(array('boost_value' => 500, 'overall_value' => array('conversions' => 10, 'losses' => 10, 'sent' => 10, 'boost' => 500, 'rate' => 0.9803921568627451)), $result);
+      $this->assertSame(array(
+                        'boost_value' => 500,
+                        'overall_value' => array(
+                          'conversions' => 10,
+                          'losses' => 10,
+                          'sent' => 10,
+                          'boost' => 500,
+                          'rate' => 0.9803921568627451)
+                        ), $result);
     }
 
-    public function testBoostFunctionRateChanged()
+    public function testBoostFunctionNegativeRate()
     {
-      $overall = Array('conversions'=> -501, 'losses' => 0, 'sent' => 0);
+      $overall = array(
+                  'conversions'=> -501,
+                  'losses' => 0,
+                  'sent' => 0
+                  );
       $boost = 500;
       $wp = new WordPress();
       $result = $wp->boost($overall, $boost);
-      $this->assertSame(array('boost_value' => 500, 'overall_value' => array('conversions' => -501, 'losses' => 0, 'sent' => 0, 'boost' => 500, 'rate' => 0)), $result);
+      $this->assertSame(array(
+                        'boost_value' => 500,
+                        'overall_value' => array(
+                        'conversions' => -501,
+                        'losses' => 0,
+                        'sent' => 0,
+                        'boost' => 500,
+                        'rate' => 0)
+                      ), $result);
     }
 //do next
     public function testCalculateShares()
     {
-      $campaigns = array(0 => array('conversions' => 10, 'losses' => 10, 'sent' => 10, 'fields' => 0,'subjects' =>
-                        array('hello' => array('conversions' => 10, 'losses' => 10, 'sent' => 10))));
-
+      $campaigns = array(0 => array(
+                               'conversions' => 10,
+                               'losses' => 10,
+                               'sent' => 10,
+                               'fields' => array(
+                                 'subjects' => array(
+                                   'hello' => array(
+                                     'enabled' => false,
+                                     'subject' => 'two'
+                                    )
+                                  )
+                                ),
+                                'subjects' => array(
+                                'hello' => array(
+                                  'conversions' => 10,
+                                  'losses' => 10,
+                                  'sent' => 10
+                                )
+                              )
+                            )
+                          );
+      $overall = array('rate' => 10);
+      $boost = 500;
       $wp = new WordPress();
-      $result = $wp->calculate_shares($campaigns);
-      // print_r($result);
+      $result = $wp->calculate_shares($campaigns, $overall, $boost);
+
+      $this->assertSame(array('campaigns_values' => array (
+                                    0 => array (
+                                        'conversions' => 10,
+                                        'losses' => 10,
+                                        'sent' => 10,
+                                        'fields' => array (
+                                            'subjects' => array (
+                                                'hello' => array (
+                                                    'enabled' => false,
+                                                    'subject' => 'two',
+                                                )
+                                            )
+                                        ),
+                                        'subjects' => array (
+
+                                            'hello' => array (
+                                                'conversions' => 10,
+                                                'losses' => 10,
+                                                'sent' => 10,
+                                                'title' => 'two',
+                                                'rate' => 0
+                                            )
+                                        ),
+                                        'valid' => false
+                                      )
+                                  )
+                              ), $result);
     }
 
     public function testGetMailingsStatsFromAkQueryMethod()
@@ -154,8 +307,13 @@ final class RequestMethodTest extends TestCase
       $ak = $this->createMock(ActionKit::class);
       $ak->expects($this->exactly(3))
          ->method('query')
-         ->willReturn(array('data' => array('conversions' => '', 'losses' => '', 'sent' => '')));
-
+         ->willReturn(array(
+                      'data' => array(
+                        'conversions' => '',
+                        'losses' => '',
+                        'sent' => '')
+                      )
+                    );
       $mailingsTest = new Mailings($ak);
       $result = $mailingsTest->get_mailing_stats_from_ak('');
     }
@@ -166,11 +324,19 @@ final class RequestMethodTest extends TestCase
       $ak = $this->createMock(ActionKit::class);
       $ak->expects($this->exactly(3))
          ->method('query')
-         ->willReturn(array('data' => array('conversions' => 'one', 'losses' => 'two', 'sent' => 'three')));
-
+         ->willReturn(array(
+                      'data' => array(
+                        'conversions' => 'one',
+                        'losses' => 'two',
+                        'sent' => 'three')
+                      )
+                    );
       $mailingsTest = new Mailings($ak);
       $result = $mailingsTest->get_mailing_stats_from_ak('');
-      $this->assertEquals(array('conversions' => 'one', 'losses' => 'two', 'sent' => 'three'), $result);
+      $this->assertEquals(array(
+                          'conversions' => 'one',
+                          'losses' => 'two',
+                          'sent' => 'three'), $result);
     }
 //Testing mailings requestMail function is returning value from ActionKit request method
     public function testActionkitAndMailingsRequestMethodReturnValue(): void
@@ -181,14 +347,23 @@ final class RequestMethodTest extends TestCase
          ->willReturn('');
 
      $mailings = new Mailings();
-     $result = $mailings->requestMail(array('from_line' => '', 'subject' => '', 'subscribers' => '', 'limit' => ''), '');
+     $result = $mailings->requestMail(array(
+                                        'from_line' => '',
+                                        'subject' => '',
+                                        'subscribers' => '',
+                                        'limit' => '')
+                                        , '');
      $this->assertEquals( $ak->request(''), $result);
     }
 // set up observer on ActionKit class request method to be called once from mailings class requestMailings method with
 //the same parameters
     public function testActionkitAndMailingsRequestMethodParameters()
     {
-      $params = array('from_line'=>'one', 'subject'=>'two', 'subscribers' =>'three', 'limit'=>'four');
+      $params = array(
+                'from_line'=>'one',
+                'subject'=>'two',
+                'subscribers' =>'three',
+                'limit'=>'four');
       $html = '';
 
       global $ak;
@@ -199,24 +374,25 @@ final class RequestMethodTest extends TestCase
       $ak->expects($this->once())
          ->method('request')
          ->with($this->equalTo(array(
-             'path' => 'mailer',
-             'method' => 'post',
-             'data' => array(
-                 'fromline' => "/rest/v1/fromline/one/",
-                 'subjects' => array('two'),
-                 'notes' => 'Generated by VictoryKit',
-                 'emailwrapper' => 27,
-                 'includes' => array(
-                     'lists' => array(26),
-                     'users' => 'three',
-                 ),
-                 'limit' => 'four',
-                 'tags' => array('victorykit'),
-                 'html' => $html,
-                 'sort_by' => 'random',
-             ),
-         )));
-
+                                 'path' => 'mailer',
+                                 'method' => 'post',
+                                 'data' => array(
+                                   'fromline' => "/rest/v1/fromline/one/",
+                                   'subjects' => array('two'),
+                                   'notes' => 'Generated by VictoryKit',
+                                   'emailwrapper' => 27,
+                                   'includes' => array(
+                                       'lists' => array(26),
+                                       'users' => 'three',
+                                   ),
+                                   'limit' => 'four',
+                                   'tags' => array('victorykit'),
+                                   'html' => $html,
+                                   'sort_by' => 'random',
+                                 ),
+                             )
+                           )
+                         );
       $mailings = new Mailings($ak);
       $mailings->requestMail($params, $html);
     }
