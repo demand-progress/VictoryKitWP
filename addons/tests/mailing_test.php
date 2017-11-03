@@ -117,6 +117,15 @@ final class RequestMethodTest extends TestCase
                                 , $result);
     }
 
+    public function testBoostFunction()
+    {
+      $overall = Array('conversions'=> 10, 'losses' => 10, 'sent' => 10);
+      $boost = 500;
+      $wp = new WordPress();
+      $result = $wp->boost($overall, $boost);
+      $this->assertSame(array('boost_value' => 500, 'overall_value' => array('conversions' => 10, 'losses' => 10, 'sent' => 10, 'boost' => 500, 'rate' => 0.9803921568627451)), $result);
+    }
+
     public function testGetMailingsStatsFromAkQueryMethod()
     {
       global $ak;
