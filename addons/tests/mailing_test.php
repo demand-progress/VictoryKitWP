@@ -80,7 +80,7 @@ final class RequestMethodTest extends TestCase
       $wpdb = $this->createMock(WordPressDb::class);
       $wpdb ->expects($this->once())
           ->method('getFields')
-          ->willReturn(0);
+          ->willReturn(array('subjects' => array('one', 'two', 'three')));
 
       $wp = new WordPress($wpdb);
       $result = $wp->loopActiveCampaigns($param, $wpdb);
@@ -88,11 +88,14 @@ final class RequestMethodTest extends TestCase
       $this->assertSame(array(2 =>
                 array(
                  'conversions' => 0,
-                 'fields' => 0,
+                 'fields' => array('subjects' => array('one', 'two', 'three')),
                  'id' => 2,
                  'losses' => 0,
                  'sent' => 0,
-                 'subjects' => array(),
+                 'subjects' => array(
+                            0 => array('conversions' => 0, 'losses' => 0, 'sent' => 0),
+                            1 => array('conversions' => 0, 'losses' => 0, 'sent' => 0),
+                            2 => array('conversions' => 0, 'losses' => 0, 'sent' => 0)),
                  'title' => 'hello world',
                  'valid' => true,
                 )
@@ -133,6 +136,16 @@ final class RequestMethodTest extends TestCase
       $wp = new WordPress();
       $result = $wp->boost($overall, $boost);
       $this->assertSame(array('boost_value' => 500, 'overall_value' => array('conversions' => -501, 'losses' => 0, 'sent' => 0, 'boost' => 500, 'rate' => 0)), $result);
+    }
+//do next
+    public function testCalculateShares()
+    {
+      $campaigns = array(0 => array('conversions' => 10, 'losses' => 10, 'sent' => 10, 'fields' => 0,'subjects' =>
+                        array('hello' => array('conversions' => 10, 'losses' => 10, 'sent' => 10))));
+
+      $wp = new WordPress();
+      $result = $wp->calculate_shares($campaigns);
+      // print_r($result);
     }
 
     public function testGetMailingsStatsFromAkQueryMethod()
