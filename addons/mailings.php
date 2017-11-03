@@ -48,7 +48,8 @@ class Mailings {
         // It probably is not needed if we are going to be sending each new campaign to more than several hundred people,
         // but it helps for testing with smaller amounts of people because it basically starts off the campaign at the same
         // rate as the overall campaign success rate and slightly adjusts from there
-        $wp->boost($overall);
+
+        $wp->boost($overall, Boost);
 
         // Calculate shares
         $campaign_rate_sum = 0;
