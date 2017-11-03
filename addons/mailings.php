@@ -52,7 +52,7 @@ class Mailings {
         $wp->boost($overall, Boost);
 
         // Calculate shares
-        $wp->calculate_shares($campaigns);
+        $wp->calculate_shares($campaigns, $overall, Boost);
 
         // Filter out invalid campaigns
         $campaigns = array_filter($campaigns, function($campaign) {
