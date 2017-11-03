@@ -79,8 +79,8 @@ function loopActiveCampaigns($results, $wpdb)
       return $results;
    }
 
-   function boost($overall){
-     $boost = 500.0;
+   function boost($overall, $boost){
+     $results = array();
      $overall['boost'] = $boost;
 
      // Overall rate
@@ -88,7 +88,14 @@ function loopActiveCampaigns($results, $wpdb)
      if ($overall['rate'] < 0) {
          $overall['rate'] = 0; // TODO: why would we not track negative results?
      }
+
+      $results['boost_value'] = $boost;
+      $results['overall_value'] = $overall;
+
+      return $results;
    }
+
+
 }
 
 function wp() {
