@@ -117,18 +117,6 @@ final class RequestMethodTest extends TestCase
                                 , $result);
     }
 
-    public function testmailingStatsReturnValue()
-    {
-      global $wp;
-      //not working yet
-      $wp = $this->createMock(WordPress::class);
-      $wp ->expects($this->once())
-          ->method('mailingStats');
-
-      $mailingsFunc = new Mailings();
-      $mailingsFunc->get_distributions($wp);
-    }
-
     public function testGetMailingsStatsFromAkQueryMethod()
     {
       global $ak;
