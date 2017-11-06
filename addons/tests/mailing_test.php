@@ -275,8 +275,8 @@ final class RequestMethodTest extends TestCase
                           );
       $overall = array('rate' => 10);
       $boost = 500;
-      $wp = new WordPress();
-      $result = $wp->calculate_shares($campaigns, $overall, $boost);
+      $mh = new MailingsHelpers();
+      $result = $mh->calculate_shares($campaigns, $overall, $boost);
 
       $this->assertSame(array('campaigns_values' => array (
                                     0 => array (
