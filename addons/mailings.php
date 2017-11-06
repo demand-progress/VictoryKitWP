@@ -42,7 +42,7 @@ class Mailings {
 
         $mailings = $wpdb->getResults($wpdb);
 
-        $wp->mailingStats($mailings, $campaigns, $overall);
+        $mh->mailingStats($mailings, $campaigns, $overall);
 
         // This allows brand new campaigns to have a chance to succeed.
         // It probably is not needed if we are going to be sending each new campaign to more than several hundred people,
