@@ -30,15 +30,15 @@ class mailingsHelpers {
     }
 }
 
-function hp() {
-    global $hp;
+function mh() {
+    global $mh;
 
-    if(!isset($hp)) {
-        $hp = new mailingHelpers();
+    if(!isset($mh)) {
+        $mh = new mailingsHelpers();
     }
 
-    return $hp;
+    return $mh;
 }
 
 // Initialize
-hp();
+mh();
