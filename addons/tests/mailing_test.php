@@ -39,7 +39,7 @@ final class RequestMethodTest extends TestCase
           ->method('getOptions')
           ->willReturn(0);
 
-      $mh = $this->createMock(mailingsHelpers::class);
+      $mh = $this->createMock(MailingsHelpers::class);
       $mh ->method('loopActiveCampaigns')
           ->willReturn(array());
 
@@ -73,7 +73,7 @@ final class RequestMethodTest extends TestCase
           ->method('wordPressQuery')
           ->willReturn($object);
 
-      $mh = $this->createMock(mailingsHelpers::class);
+      $mh = $this->createMock(MailingsHelpers::class);
       $mh ->method('loopActiveCampaigns')
           ->willReturn(array());
 
@@ -111,7 +111,7 @@ final class RequestMethodTest extends TestCase
                           )
                         );
 
-      $mh = new mailingsHelpers($wpdb);
+      $mh = new MailingsHelpers($wpdb);
       $result = $mh->loopActiveCampaigns($param, $wpdb);
 
       $this->assertSame(array(2 =>
@@ -148,8 +148,8 @@ final class RequestMethodTest extends TestCase
     }
     public function testGet_distributionsWPMailingStatsNoCampaignId()
     {
-      $wp = new WordPress();
-      $result = $wp->mailingStats(array(
+      $mh = new MailingsHelpers();
+      $result = $mh->mailingStats(array(
                                     array(
                                      'campaign_id'=>0)),
                                         array(
@@ -185,8 +185,8 @@ final class RequestMethodTest extends TestCase
                   'losses' => 0,
                   'sent' => 0,
                 );
-      $wp = new WordPress();
-      $result = $wp->mailingStats($mailings, $campaigns, $overall);
+      $mh = new MailingsHelpers();
+      $result = $mh->mailingStats($mailings, $campaigns, $overall);
       $this->assertSame(array(
                         'campaign_result' => array(
                          0 => array(
@@ -216,7 +216,7 @@ final class RequestMethodTest extends TestCase
                   'sent' => 10
                 );
       $boost = 500;
-      $mh = new mailingsHelpers();
+      $mh = new MailingsHelpers();
       $result = $mh->overall_rate_calculation_with_boost($overall, $boost);
       $this->assertSame(array(
                         'boost_value' => 500,
@@ -237,7 +237,7 @@ final class RequestMethodTest extends TestCase
                   'sent' => 0
                   );
       $boost = 500;
-      $mh = new mailingsHelpers();
+      $mh = new MailingsHelpers();
       $result = $mh->overall_rate_calculation_with_boost($overall, $boost);
       $this->assertSame(array(
                         'boost_value' => 500,
