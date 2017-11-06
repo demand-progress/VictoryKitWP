@@ -5,7 +5,7 @@ if(!defined('ABSPATH')) exit;
 require_once(__DIR__. '/../constants.php');
 require_once(__DIR__. '/wordpress.php');
 require_once(__DIR__. '/wordpressdb.php');
-require_once(__DIR__. '/helperFunctions.php');
+require_once(__DIR__. '/mailingsHelpers.php');
 // Display errors
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -21,7 +21,7 @@ class Mailings {
     {
         global $wpdb;
         global $wp;
-        global $hp;
+        global $mh;
 
         if (!$wp->getOptions('subscribed_users')) {
           // no subscribed users in DB yet
@@ -31,7 +31,7 @@ class Mailings {
         // Get active campaigns
         $results = $wp->wordPressQuery();
 
-        $campaigns = $hp->loopActiveCampaigns($results, $wpdb);
+        $campaigns = $mh->loopActiveCampaigns($results, $wpdb);
 
         // Get campaign performance
         $overall = array(
@@ -49,10 +49,10 @@ class Mailings {
         // but it helps for testing with smaller amounts of people because it basically starts off the campaign at the same
         // rate as the overall campaign success rate and slightly adjusts from there
 
-        $wp->boost($overall, Boost);
+        $wp->boost($overall, BOOST);
 
         // Calculate shares
-        $wp->calculate_shares($campaigns, $overall, Boost);
+        $wp->calculate_shares($campaigns, $overall, BOOST);
 
         // Filter out invalid campaigns
         $campaigns = array_filter($campaigns, function($campaign) {
