@@ -28,6 +28,22 @@ class mailingsHelpers {
         }
        return $campaigns;
     }
+
+    function overall_rate_calculation_with_boost($overall, $boost){
+      $results = array();
+      $overall['boost'] = $boost;
+
+      // Overall rate
+      $overall['rate'] = ($overall['conversions'] - $overall['losses'] + $boost) / ($overall['sent'] + $boost);
+      if ($overall['rate'] < 0) {
+          $overall['rate'] = 0; // TODO: why would we not track negative results?
+      }
+
+       $results['boost_value'] = $boost;
+       $results['overall_value'] = $overall;
+
+       return $results;
+    }
 }
 
 function mh() {
