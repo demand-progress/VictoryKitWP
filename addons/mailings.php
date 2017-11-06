@@ -49,7 +49,7 @@ class Mailings {
         // but it helps for testing with smaller amounts of people because it basically starts off the campaign at the same
         // rate as the overall campaign success rate and slightly adjusts from there
 
-        $wp->boost($overall, BOOST);
+        $mh->overall_rate_calculation_with_boost($overall, BOOST);
 
         // Calculate shares
         $wp->calculate_shares($campaigns, $overall, BOOST);
