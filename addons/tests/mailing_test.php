@@ -5,6 +5,7 @@ define('ABSPATH', 1);
 require_once(__DIR__. '/../actionkit.php');
 require_once(__DIR__. '/../mailings.php');
 require_once(__DIR__. '/../wordpressdb.php');
+require_once(__DIR__. '/../helperFunctions.php');
 function get_option(){}
 
 function add_action($one, $two){}
@@ -31,13 +32,15 @@ final class RequestMethodTest extends TestCase
     public function testGetDistributionsGetOptionsMocked()
     {
       global $wp;
+      global $hp;
 
       $wp = $this->createMock(WordPress::class);
       $wp ->expects($this->once())
           ->method('getOptions')
           ->willReturn(0);
 
-      $wp ->method('loopActiveCampaigns')
+      $hp = $this->createMock(Helpers::class);
+      $hp ->method('loopActiveCampaigns')
           ->willReturn(array());
 
       $mailingsFunc = new Mailings();
@@ -50,6 +53,7 @@ final class RequestMethodTest extends TestCase
     {
       global $wp;
       global $wpdb;
+      global $hp;
 
       $object =  (object) array(
                           'posts' => (object)
@@ -69,7 +73,8 @@ final class RequestMethodTest extends TestCase
           ->method('wordPressQuery')
           ->willReturn($object);
 
-      $wp ->method('loopActiveCampaigns')
+      $hp = $this->createMock(Helpers::class);
+      $hp ->method('loopActiveCampaigns')
           ->willReturn(array());
 
       $wpdb = $this->createMock(WordPressDb::class);
@@ -105,8 +110,9 @@ final class RequestMethodTest extends TestCase
                             'three')
                           )
                         );
-      $wp = new WordPress($wpdb);
-      $result = $wp->loopActiveCampaigns($param, $wpdb);
+
+      $hp = new Helpers($wpdb);
+      $result = $hp->loopActiveCampaigns($param, $wpdb);
 
       $this->assertSame(array(2 =>
                           array(
