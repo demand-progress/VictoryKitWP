@@ -1,6 +1,6 @@
 <?
 
-class Helpers {
+class mailingsHelpers {
   function loopActiveCampaigns($results, $wpdb)
    {
       $campaigns = array();
@@ -34,7 +34,7 @@ function hp() {
     global $hp;
 
     if(!isset($hp)) {
-        $hp = new Helpers();
+        $hp = new mailingHelpers();
     }
 
     return $hp;
