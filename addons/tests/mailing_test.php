@@ -208,7 +208,7 @@ final class RequestMethodTest extends TestCase
                               ), $result);
     }
 
-    public function testBoostFunction()
+    public function testOverallRateCalcuationWithBoostFunction()
     {
       $overall = array(
                   'conversions'=> 10,
@@ -216,8 +216,8 @@ final class RequestMethodTest extends TestCase
                   'sent' => 10
                 );
       $boost = 500;
-      $wp = new WordPress();
-      $result = $wp->boost($overall, $boost);
+      $mh = new mailingsHelpers();
+      $result = $mh->overall_rate_calculation_with_boost($overall, $boost);
       $this->assertSame(array(
                         'boost_value' => 500,
                         'overall_value' => array(
@@ -229,7 +229,7 @@ final class RequestMethodTest extends TestCase
                         ), $result);
     }
 
-    public function testBoostFunctionNegativeRate()
+    public function testOverallRateCalcuationWithBoostFunctionNegativeRate()
     {
       $overall = array(
                   'conversions'=> -501,
@@ -237,8 +237,8 @@ final class RequestMethodTest extends TestCase
                   'sent' => 0
                   );
       $boost = 500;
-      $wp = new WordPress();
-      $result = $wp->boost($overall, $boost);
+      $mh = new mailingsHelpers();
+      $result = $mh->overall_rate_calculation_with_boost($overall, $boost);
       $this->assertSame(array(
                         'boost_value' => 500,
                         'overall_value' => array(
