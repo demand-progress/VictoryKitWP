@@ -5,6 +5,7 @@ if(!defined('ABSPATH')) exit;
 require_once(__DIR__. '/../constants.php');
 require_once(__DIR__. '/wordpress.php');
 require_once(__DIR__. '/wordpressdb.php');
+require_once(__DIR__. '/helperFunctions.php');
 // Display errors
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -16,12 +17,11 @@ class Mailings {
         // ...
     }
 
-
-
     function get_distributions()
     {
         global $wpdb;
         global $wp;
+        global $hp;
 
         if (!$wp->getOptions('subscribed_users')) {
           // no subscribed users in DB yet
@@ -31,7 +31,7 @@ class Mailings {
         // Get active campaigns
         $results = $wp->wordPressQuery();
 
-        $campaigns = $wp->loopActiveCampaigns($results, $wpdb);
+        $campaigns = $hp->loopActiveCampaigns($results, $wpdb);
 
         // Get campaign performance
         $overall = array(
