@@ -1,6 +1,4 @@
 <?
-require_once(__DIR__. '/wordpressdb.php');
-
 
 class WordPress {
   function query(){}
