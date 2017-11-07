@@ -3,9 +3,9 @@
 // Exit if accessed directly
 if(!defined('ABSPATH')) exit;
 require_once(__DIR__. '/../constants.php');
-require_once(__DIR__. '/wordpress.php');
-require_once(__DIR__. '/wordpressdb.php');
-require_once(__DIR__. '/mailingsHelpers.php');
+require_once(__DIR__. '/mockClasses/wordpress.php');
+require_once(__DIR__. '/mockClasses/wordpressdb.php');
+require_once(__DIR__. '/mockClasses/mailingsHelpers.php');
 // Display errors
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
