@@ -14,7 +14,7 @@ class WordPress {
     return get_option($param);
   }
 
- function wordPressQuery()
+  function wordPressQuery()
   {
     return new WP_Query(array(
         'post_type' => 'campaign',
@@ -36,6 +36,11 @@ class WordPress {
        GROUP BY
            vkm.campaign_id, vkm.variation_subject
     ', ARRAY_A);
+  }
+
+  function getFields($id)
+  {
+    return get_fields($id);
   }
 }
 
