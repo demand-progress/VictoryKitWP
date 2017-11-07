@@ -9,12 +9,6 @@ function get_option(){}
 function add_action(){}
 function update_option(){}
 
-class WordPress {
-  function query(){}
-  function get_col(){}
-  function update(){}
-};
-
 use PHPUnit\Framework\TestCase;
 
 final class RequestMethodTest extends TestCase
