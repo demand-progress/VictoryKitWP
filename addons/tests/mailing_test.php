@@ -4,8 +4,9 @@ define('ABSPATH', 1);
 
 require_once(__DIR__. '/../actionkit.php');
 require_once(__DIR__. '/../mailings.php');
-require_once(__DIR__. '/../wordpressdb.php');
-require_once(__DIR__. '/../mailingsHelpers.php');
+require_once(__DIR__. '/../mockClasses/wordpress.php');
+require_once(__DIR__. '/../mockClasses/wordpressdb.php');
+require_once(__DIR__. '/../mockClasses/mailingsHelpers.php');
 function get_option(){}
 
 function add_action($one, $two){}
