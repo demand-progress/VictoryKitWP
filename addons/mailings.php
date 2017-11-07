@@ -40,7 +40,7 @@ class Mailings {
             'sent' => 0,
         );
 
-        $mailings = $wpdb->getResults($wpdb);
+        $mailings = $wp->getResults($wpdb);
 
         $mh->mailingStats($mailings, $campaigns, $overall);
 
