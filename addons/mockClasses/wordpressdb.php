@@ -1,11 +1,5 @@
 <?
 class WordPressDb {
-
-
-
-  function getFields($id){
-    return get_fields($id);
-  }
 }
 
 function wpdb() {
