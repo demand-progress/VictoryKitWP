@@ -100,8 +100,8 @@ final class RequestMethodTest extends TestCase
                                 'post_title'=>'hello world')
                             )
                       );
-      $wpdb = $this->createMock(WordPressDb::class);
-      $wpdb ->expects($this->once())
+      $wp = $this->createMock(WordPress::class);
+      $wp ->expects($this->once())
           ->method('getFields')
           ->willReturn(array(
                         'subjects' =>
@@ -113,7 +113,7 @@ final class RequestMethodTest extends TestCase
                         );
 
       $mh = new MailingsHelpers($wpdb);
-      $result = $mh->loopActiveCampaigns($param, $wpdb);
+      $result = $mh->loopActiveCampaigns($param, $wp);
 
       $this->assertSame(array(2 =>
                           array(
