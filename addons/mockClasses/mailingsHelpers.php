@@ -33,14 +33,14 @@ class MailingsHelpers {
       return $results;
    }
 
-  function loopActiveCampaigns($results, $wpdb)
+  function loopActiveCampaigns($results, $class)
    {
       $campaigns = array();
       foreach ($results->posts as $campaign) {
           $id = $campaign->ID;
           $campaigns[$id] = array(
               'conversions' => 0,
-              'fields' => $wpdb->getFields($id),
+              'fields' => $class->getFields($id),
               'id' => $id,
               'losses' => 0,
               'sent' => 0,
