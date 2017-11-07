@@ -69,6 +69,13 @@ final class RequestMethodTest extends TestCase
       $wp ->expects($this->once())
           ->method('getOptions')
           ->willReturn(1);
+
+      $wp ->expects($this->once())
+          ->method('getResults')
+          ->willReturn(array(''=>
+                        array('campaign_id'=>'')
+                        )
+                      );
   //this isn't working
       $wp ->expects($this->once())
           ->method('wordPressQuery')
@@ -78,13 +85,6 @@ final class RequestMethodTest extends TestCase
       $mh ->method('loopActiveCampaigns')
           ->willReturn(array());
 
-      $wpdb = $this->createMock(WordPressDb::class);
-      $wpdb ->expects($this->once())
-            ->method('getResults')
-            ->willReturn(array(''=>
-                          array('campaign_id'=>'')
-                          )
-                        );
       $mailingsFunc = new Mailings();
       $mailingsFunc->get_distributions();
    }
