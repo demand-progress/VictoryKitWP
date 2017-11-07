@@ -4,7 +4,6 @@
 if(!defined('ABSPATH')) exit;
 require_once(__DIR__. '/../constants.php');
 require_once(__DIR__. '/mockClasses/wordpress.php');
-require_once(__DIR__. '/mockClasses/wordpressdb.php');
 require_once(__DIR__. '/mockClasses/mailingsHelpers.php');
 // Display errors
 ini_set('display_errors', 1);
