@@ -31,11 +31,11 @@ final class RequestMethodTest extends TestCase
   {
     public function testGetDistributionsGetOptionsMocked()
     {
-      global $wp;
+      global $wpc;
       global $mh;
 
-      $wp = $this->createMock(WordPress::class);
-      $wp ->expects($this->once())
+      $wpc= $this->createMock(WordPress::class);
+      $wpc->expects($this->once())
           ->method('getOptions')
           ->willReturn(0);
 
@@ -51,7 +51,7 @@ final class RequestMethodTest extends TestCase
 
     public function testGetDistributions()
     {
-      global $wp;
+      global $wpc;
       global $wpdb;
       global $mh;
 
@@ -64,19 +64,19 @@ final class RequestMethodTest extends TestCase
                               )
                           );
 
-      $wp = $this->createMock(WordPress::class);
-      $wp ->expects($this->once())
+      $wpc= $this->createMock(WordPress::class);
+      $wpc->expects($this->once())
           ->method('getOptions')
           ->willReturn(1);
 
-      $wp ->expects($this->once())
+      $wpc->expects($this->once())
           ->method('getResults')
           ->willReturn(array(''=>
                         array('campaign_id'=>'')
                         )
                       );
   //this isn't working
-      $wp ->expects($this->once())
+      $wpc->expects($this->once())
           ->method('wordPressQuery')
           ->willReturn($object);
 
@@ -99,8 +99,8 @@ final class RequestMethodTest extends TestCase
                                 'post_title'=>'hello world')
                             )
                       );
-      $wp = $this->createMock(WordPress::class);
-      $wp ->expects($this->once())
+      $wpc= $this->createMock(WordPress::class);
+      $wpc->expects($this->once())
           ->method('getFields')
           ->willReturn(array(
                         'subjects' =>
@@ -112,7 +112,7 @@ final class RequestMethodTest extends TestCase
                         );
 
       $mh = new MailingsHelpers($wpdb);
-      $result = $mh->loopActiveCampaigns($param, $wp);
+      $result = $mh->loopActiveCampaigns($param, $wpc);
 
       $this->assertSame(array(2 =>
                           array(
