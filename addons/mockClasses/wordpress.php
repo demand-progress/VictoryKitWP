@@ -1,4 +1,5 @@
 <?
+if(!defined('ABSPATH')) exit;
 
 class WordPress {
   function query(){}
@@ -42,14 +43,14 @@ class WordPress {
   }
 }
 
-function wp() {
-  global $wp;
+function wordp() {
+  global $wpc;
 
-  if(!isset($wp)) {
-    $wp = new WordPress();
+  if(!isset($wpc)) {
+    $wpc= new WordPress();
   }
-  return $wp;
+  return $wpc;
 }
 
 // Initialize
-wp();
+wordp();
