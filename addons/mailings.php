@@ -1,10 +1,10 @@
 <?
-
 // Exit if accessed directly
 if(!defined('ABSPATH')) exit;
 require_once(__DIR__. '/../constants.php');
 require_once(__DIR__. '/mockClasses/wordpress.php');
 require_once(__DIR__. '/mockClasses/mailingsHelpers.php');
+
 // Display errors
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -19,16 +19,16 @@ class Mailings {
     function get_distributions()
     {
         global $wpdb;
-        global $wp;
+        global $wpc;
         global $mh;
 
-        if (!$wp->getOptions('subscribed_users')) {
+        if (!$wpc->getOptions('subscribed_users')) {
           // no subscribed users in DB yet
           return array('campaigns' => array(), 'overall' => array());
         }
 
         // Get active campaigns
-        $results = $wp->wordPressQuery();
+        $results = $wpc->wordPressQuery();
 
         $campaigns = $mh->loopActiveCampaigns($results, $wpdb);
 
@@ -39,7 +39,7 @@ class Mailings {
             'sent' => 0,
         );
 
-        $mailings = $wp->getResults($wpdb);
+        $mailings = $wpc->getResults($wpdb);
 
         $mh->mailingStats($mailings, $campaigns, $overall);
 
