@@ -250,7 +250,7 @@ final class RequestMethodTest extends TestCase
                       ), $result);
     }
 //do next
-    public function testCalculateShares()
+    public function testCalculateSharesWithCampaignsEnabledSetToFalse()
     {
       $campaigns = array(0 => array(
                                'conversions' => 10,
@@ -306,6 +306,78 @@ final class RequestMethodTest extends TestCase
                                   )
                               ), $result);
     }
+
+    public function testCalculateSharesWithCampaignsEnabledSetToTrue()
+    {
+      $campaigns = array(0 => array(
+                               'conversions' => 10,
+                               'losses' => 10,
+                               'sent' => 10,
+                               'fields' => array(
+                                 'subjects' => array(
+                                   'hello' => array(
+                                     'enabled' => true,
+                                     'subject' => 'two'
+                                    )
+                                  )
+                                ),
+                                'subjects' => array(
+                                  'hello' => array(
+                                    'conversions' => 10,
+                                    'losses' => 10,
+                                    'sent' => 10
+                                  )
+                                )
+                              )
+                            );
+      $overall = array('rate' => 10);
+      $boost = 500;
+      $mh = new MailingsHelpers();
+      $result = $mh->calculate_shares($campaigns, $overall, $boost);
+      $this->assertSame(array('campaigns_values' => Array
+        (
+            0 => Array
+                (
+                    'conversions' => 10,
+                    'losses' => 10,
+                    'sent' => 10,
+                    'fields' => Array
+                        (
+                            'subjects' => Array
+                                (
+                                    'hello' => Array
+                                        (
+                                            'enabled' => true,
+                                            'subject' => 'two'
+                                        )
+
+                                )
+
+                        ),
+
+                    'subjects' => Array
+                        (
+                            'hello' => Array
+                                (
+                                    'conversions' => 10,
+                                    'losses' => 10,
+                                    'sent' => 10,
+                                    'title' => 'two',
+                                    'rate' => 9.803921568627452,
+                                    'share' => 1.0
+                                )
+
+                        ),
+
+                    'rate' => 9.803921568627452
+                )
+
+        )
+
+)
+, $result);
+    }
+
 
     public function testGetMailingsStatsFromAkQueryMethod()
     {
