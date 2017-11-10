@@ -140,6 +140,12 @@ class MailingsHelpers {
      $results['campaigns_values'] = $campaigns;
      return $results;
   }
+
+  function filterInvalidCampaigns($campaigns){
+    $campaigns = array_filter($campaigns, function($campaign) {
+        return $campaign['valid'];
+    });
+  }
 }
 
 function mh() {
