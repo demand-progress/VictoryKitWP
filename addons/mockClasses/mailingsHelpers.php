@@ -71,7 +71,6 @@ class MailingsHelpers {
         $overall['rate'] = 0; // TODO: why would we not track negative results?
     }
 
-     $results['boost_value'] = $boost;
      $results['overall_value'] = $overall;
 
      return $results;
