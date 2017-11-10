@@ -139,7 +139,8 @@ final class RequestMethodTest extends TestCase
                                           2 => array(
                                                 'conversions' => 0,
                                                 'losses' => 0,
-                                                'sent' => 0)),
+                                                'sent' => 0)
+                                          ),
                            'title' => 'hello world',
                            'valid' => true,
                           )
@@ -170,42 +171,82 @@ final class RequestMethodTest extends TestCase
                       'sent' => 10,
                       'variation_subject' => 'hello')
                     );
-      $campaigns = array(
-                    0 => array(
-                      'conversions' => 0,
-                      'losses' => 0,
-                      'sent' => 0,
-                      'subjects' => array(
-
-                        )
-                      )
-                    );
+      $campaigns = array(2 =>
+                          array(
+                           'conversions' => 10,
+                           'fields' => array(
+                                        'subjects' =>
+                                          array(
+                                            'one',
+                                            'two',
+                                            'three')
+                                          ),
+                           'id' => 2,
+                           'losses' => 10,
+                           'sent' => 10,
+                           'subjects' => array(
+                                          0 => array(
+                                                'conversions' => 10,
+                                                'losses' => 10,
+                                                'sent' => 10),
+                                          1 => array(
+                                                'conversions' => 10,
+                                                'losses' => 10,
+                                                'sent' => 10),
+                                          2 => array(
+                                                'conversions' => 10,
+                                                'losses' => 10,
+                                                'sent' => 10)
+                                          ),
+                           'title' => 'hello world',
+                           'valid' => true,
+                          )
+                        );
       $overall = array(
-                  'conversions' => 0,
-                  'losses' => 0,
-                  'sent' => 0,
+                  'conversions' => 10,
+                  'losses' => 10,
+                  'sent' => 10,
                 );
       $mh = new MailingsHelpers();
       $result = $mh->mailingStats($mailings, $campaigns, $overall);
+
       $this->assertSame(array(
                         'campaign_result' => array(
-                         0 => array(
+                         2 => array(
                               'conversions' => 10,
+                              'fields' => array(
+                                           'subjects' =>
+                                             array(
+                                               'one',
+                                               'two',
+                                               'three')
+                                             ),
+                              'id' => 2,
                               'losses' => 10,
                               'sent' => 10,
                               'subjects' => array(
-                                  'hello' => array(
-                                    'conversions' => 10,
-                                    'losses' => 10,
-                                    'sent' => 10)
-                                  )
-                                )
-                              ),
-                              'overall_result' => array(
-                                'conversions'=> 10,
-                                'losses' => 10,
-                                'sent' => 10)
-                              ), $result);
+                                             0 => array(
+                                                   'conversions' => 10,
+                                                   'losses' => 10,
+                                                   'sent' => 10),
+                                             1 => array(
+                                                   'conversions' => 10,
+                                                   'losses' => 10,
+                                                   'sent' => 10),
+                                             2 => array(
+                                                   'conversions' => 10,
+                                                   'losses' => 10,
+                                                   'sent' => 10)
+                                             ),
+                              'title' => 'hello world',
+                              'valid' => true,
+                             )
+                           ),
+                            'overall_result' => array(
+                              'conversions'=> 10,
+                              'losses' => 10,
+                              'sent' => 10)
+                            ), $result);
     }
 
     public function testOverallRateCalcuationWithBoostFunction()
@@ -361,6 +402,48 @@ final class RequestMethodTest extends TestCase
                                   )
                                   , $result);
     }
+
+    public function testfilterInvalidCampaignsReturnsNoCampaigns()
+    {
+      $campaigns = array(
+                    0 => array(
+                      'conversions' => 10,
+                      'losses' => 10,
+                      'sent' => 10,
+                      'fields' => array(
+                      'subjects' => array(),
+                        ),
+                      'subjects' => array(),
+                      'valid' => false
+                      )
+                    );
+
+      $mh = new MailingsHelpers();
+      $result = $mh->filterInvalidCampaigns($campaigns);
+
+      $this->assertSame(null, $result);
+    }
+
+    // public function testfilterInvalidCampaignsReturnsOneCampaign()
+    // {
+    //   $campaigns = array(
+    //                 0 => array(
+    //                   'conversions' => 10,
+    //                   'losses' => 10,
+    //                   'sent' => 10,
+    //                   'fields' => array(
+    //                   'subjects' => array(),
+    //                     ),
+    //                   'subjects' => array(),
+    //                   'valid' => false
+    //                   )
+    //                 );
+    //
+    //   $mh = new MailingsHelpers();
+    //   $result = $mh->filterInvalidCampaigns($campaigns);
+    //
+    //   $this->assertSame(null, $result);
+    // }
 
     public function testGetMailingsStatsFromAkQueryMethod()
     {
