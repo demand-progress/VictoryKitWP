@@ -150,11 +150,10 @@ final class RequestMethodTest extends TestCase
     public function testGet_distributionsWPMailingStatsNoCampaignId()
     {
       $mh = new MailingsHelpers();
-      $result = $mh->mailingStats(array(
-                                    array(
-                                     'campaign_id'=>0)),
-                                        array(
-                                          'noId' => null), '');
+      $mailings = array(array('campaign_id'=>0));
+      $campaigns = array('noId' => null);
+      $overall = '';
+      $result = $mh->mailingStats($mailings, $campaigns, $overall);
       $this->assertSame(array(
                         'campaign_result'=> array(
                                             'noId' => null
@@ -260,8 +259,7 @@ final class RequestMethodTest extends TestCase
       $mh = new MailingsHelpers();
       $result = $mh->overall_rate_calculation_with_boost($overall, $boost);
       $this->assertSame(array(
-                        'boost_value' => 500,
-                        'overall_value' => array(
+                      'overall_value' => array(
                           'conversions' => 10,
                           'losses' => 10,
                           'sent' => 10,
@@ -281,7 +279,6 @@ final class RequestMethodTest extends TestCase
       $mh = new MailingsHelpers();
       $result = $mh->overall_rate_calculation_with_boost($overall, $boost);
       $this->assertSame(array(
-                        'boost_value' => 500,
                         'overall_value' => array(
                         'conversions' => -501,
                         'losses' => 0,
@@ -293,36 +290,37 @@ final class RequestMethodTest extends TestCase
 
     public function testCalculateSharesWithCampaignsMultipleSubjects()
     {
-      $campaigns = array(0 => array(
-                               'conversions' => 10,
-                               'losses' => 10,
-                               'sent' => 10,
-                               'fields' => array(
-                                 'subjects' => array(
-                                   'hello' => array(
-                                     'enabled' => false,
-                                     'subject' => 'one'
-                                    ),
-                                    'hello2' => array(
-                                      'enabled' => true,
-                                      'subject' => 'two'
-                                    )
-                                  )
-                                ),
-                                'subjects' => array(
-                                  'hello' => array(
-                                    'conversions' => 10,
-                                    'losses' => 10,
-                                    'sent' => 10
-                                  ),
-                                  'hello2' => array(
-                                    'conversions' => 10,
-                                    'losses' => 10,
-                                    'sent' => 10
-                                  )
-                                )
-                              )
-                            );
+      $campaigns =array(
+       2 => array(
+            'conversions' => 10,
+            'fields' => array(
+                         'subjects' =>
+                           array(
+                             'one',
+                             'two',
+                             'three')
+                           ),
+            'id' => 2,
+            'losses' => 10,
+            'sent' => 10,
+            'subjects' => array(
+                           0 => array(
+                                 'conversions' => 10,
+                                 'losses' => 10,
+                                 'sent' => 10),
+                           1 => array(
+                                 'conversions' => 10,
+                                 'losses' => 10,
+                                 'sent' => 10),
+                           2 => array(
+                                 'conversions' => 10,
+                                 'losses' => 10,
+                                 'sent' => 10)
+                           ),
+            'title' => 'hello world',
+            'valid' => true,
+           )
+         );
       $overall = array('rate' => 10);
       $boost = 500;
       $mh = new MailingsHelpers();
