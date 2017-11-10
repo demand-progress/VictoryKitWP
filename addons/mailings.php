@@ -54,9 +54,7 @@ class Mailings {
         $mh->calculate_shares($campaigns, $overall, BOOST);
 
         // Filter out invalid campaigns
-        $campaigns = array_filter($campaigns, function($campaign) {
-            return $campaign['valid'];
-        });
+        $mh->filterInvalidCampaigns($campaigns);
 
         // Get share percentages
         foreach ($campaigns as $campaign_index => &$campaign) {
