@@ -26,11 +26,9 @@ class Mailings {
           // no subscribed users in DB yet
           return array('campaigns' => array(), 'overall' => array());
         }
-
         // Get active campaigns
         $results = $wpc->wordPressQuery();
-
-        $campaigns = $mh->loopActiveCampaigns($results, $wpdb);
+        $campaigns = $mh->loopActiveCampaigns($results, $wpc);
 
         // Get campaign performance
         $overall = array(
@@ -54,14 +52,13 @@ class Mailings {
         $mh->calculate_shares($campaigns, $overall, BOOST);
 
         // Filter out invalid campaigns
+        //currently testing
         $mh->filterInvalidCampaigns($campaigns);
-
+        
         // Get share percentages
-        foreach ($campaigns as $campaign_index => &$campaign) {
-            $share = $campaign_rate_sum ? $campaign['rate'] / $campaign_rate_sum : 0;
-            $campaign['share'] = $share;
-        }
-
+        //must test
+        $mh->getSharePercentages($campaigns);
+        
         // Limit share percentages, based on subscriber availability
         $campaign_share_sum = 1;
         $limit_per_day = get_option('subscribed_users') / 7;
@@ -263,11 +260,11 @@ class Mailings {
     }
 }
 
-
 /**************** Actions *****************/
 
 // Update total count of subscribers in VictoryKit list
 //   Run every 12 hours
+
 function vk_mailings_update_subscribed_users_count_action() {
     global $ak;
     $sql = "
@@ -645,4 +642,5 @@ function create_mailings_instance() {
 
     return $vk_mailings;
 }
+
 create_mailings_instance();
