@@ -215,11 +215,11 @@ class Mailings {
                 return -1;
             }
         });
-
+ 
         return array(
             'campaigns' => $campaigns,
             'overall' => $overall,
-        );
+        ); 
     }
 
     // Get all subscribers who have not been mailed for this campaign AND have not been mailed for any campaign within the last week
@@ -482,7 +482,7 @@ function vk_mailings_create_new_mailings_action() {
     $limit_per_day = get_option('subscribed_users') / 7;
     $distributions = $vk_mailings->get_distributions();
 
-        $allCampaigns = trim(preg_replace('/\s\s+/', ' ', var_export($distributions, true)));
+        $allCampaigns = trim(preg_replace('/\s+/', ' ',var_export($distributions, true)));
         error_log('#distributionResults vk_mailings_create_new_mailings_action: '.$allCampaigns);
 
     foreach ($distributions['campaigns'] as $campaign) {
