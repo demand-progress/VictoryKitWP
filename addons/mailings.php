@@ -101,7 +101,7 @@ class Mailings {
         // It probably is not needed if we are going to be sending each new campaign to more than several hundred people,
         // but it helps for testing with smaller amounts of people because it basically starts off the campaign at the same
         // rate as the overall campaign success rate and slightly adjusts from there
-        $boost = 500.0;
+        $boost = BOOST;
         $overall['boost'] = $boost;
 
         // Overall rate
@@ -484,7 +484,7 @@ function vk_mailings_create_new_mailings_action() {
 
         $allCampaigns = trim(preg_replace('/\s\s+/', ' ', var_export($distributions, true)));
         error_log('#distributionResults vk_mailings_create_new_mailings_action: '.$allCampaigns);
-        
+
     foreach ($distributions['campaigns'] as $campaign) {
         $id = $campaign['id'];
         $fields = $campaign['fields'];
@@ -748,4 +748,5 @@ function create_mailings_instance() {
 
     return $vk_mailings;
 }
+
 create_mailings_instance();
