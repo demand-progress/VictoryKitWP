@@ -15,3 +15,11 @@ require_once('addons/analytics.php');
 require_once('addons/post-type-campaign.php');
 require_once('addons/remove-wp-extras.php');
 require_once('addons/sharing.php');
+
+// added to run cron request on flywheel
+add_filter( 'cron_request', function( $args ) {
+
+    $args['url'] = set_url_scheme( $args['url'], 'http' );
+    return $args;
+ 
+ } );
