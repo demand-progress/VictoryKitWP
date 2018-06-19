@@ -24,13 +24,11 @@ class Mailings {
         }
 
         // Get active campaigns
-        //pulling out campaigns from wp post what have post_type set as campaign and post_status set as publish
         $campaigns = array();
         $results = new WP_Query(array(
             'post_type' => 'campaign',
             'post_status' => 'publish',
         ));
-    
         foreach ($results->posts as $campaign) {
             $id = $campaign->ID;
             $campaigns[$id] = array(
@@ -44,7 +42,6 @@ class Mailings {
                 'valid' => true,
             );
 
-        
             // Get all subjects
             $subjects = $campaigns[$id]['fields']['subjects'];
             for ($i = 0; $i < count($subjects); $i++) {
@@ -55,7 +52,6 @@ class Mailings {
                 );
             }
         }
-        // echo '<pre>' . var_export( $campaigns, true) . '</pre>';
 
         // Get campaign performance
         $overall = array(
@@ -116,15 +112,12 @@ class Mailings {
 
         // Calculate shares
         $campaign_rate_sum = 0;
-           
-        // echo '<pre>' . var_export($campaign, true) . '</pre>';
-
         foreach ($campaigns as $campaign_index => &$campaign) {
             // Subjects
             $fields = $campaign['fields'];
             $subject_rate_sum = 0;
             $valid_subjects = 0;
-           
+
             foreach ($campaign['subjects'] as $subject_index => &$subject) {
                 $enabled = $fields['subjects'][$subject_index]['enabled'];
                 $subject['title'] = $fields['subjects'][$subject_index]['subject'];
@@ -222,7 +215,7 @@ class Mailings {
                 return -1;
             }
         });
-        
+
         return array(
             'campaigns' => $campaigns,
             'overall' => $overall,
@@ -338,7 +331,6 @@ class Mailings {
         $html = $this->render($params);
 
         global $ak;
-      
         $response = $ak->request(array(
             'path' => 'mailer',
             'method' => 'post',
@@ -371,9 +363,6 @@ class Mailings {
             'data' => array(),
         ));
 
-        // '<pre>' . var_export($response , true) . '</pre>';
-
-
         $response['ak_mailing_id'] = $ak_mailing_id;
 
         global $wpdb;
@@ -394,13 +383,13 @@ class Mailings {
 //   Run every 12 hours
 function vk_mailings_update_subscribed_users_count_action() {
     global $ak;
-    $sql = "
+    $sql = '
     SELECT
         COUNT(DISTINCT cs.id) AS user_count
     FROM
         core_subscription AS cs
     WHERE
-        cs.list_id ="+ VK_LIST_ID;
+        cs.list_id ='+VK_LIST_ID;
     $response = $ak->query($sql);
     if ($response['success']) {
         $count = $response['data']['user_count'];
@@ -491,12 +480,11 @@ function vk_mailings_create_new_mailings_action() {
     global $vk_mailings, $wpdb;
 
     $limit_per_day = get_option('subscribed_users') / 7;
-    
     $distributions = $vk_mailings->get_distributions();
-    $allCampaigns = trim(preg_replace('/\s\s+/', ' ', var_export($distributions, true)));
- 
-    error_log('#distributionResults vk_mailings_create_new_mailings_action: '.$allCampaigns);
 
+        $allCampaigns = trim(preg_replace('/\s\s+/', ' ', var_export($distributions, true)));
+        error_log('#distributionResults vk_mailings_create_new_mailings_action: '.$allCampaigns);
+        
     foreach ($distributions['campaigns'] as $campaign) {
         $id = $campaign['id'];
         $fields = $campaign['fields'];
@@ -747,7 +735,6 @@ function vk_mailings_cron_test_action() {
     $count = get_option('cron_test', 0);
     update_option('cron_test', $count + 1);
 }
-
 add_action('vk_mailings_cron_test', 'vk_mailings_cron_test_action');
 
 
@@ -761,8 +748,4 @@ function create_mailings_instance() {
 
     return $vk_mailings;
 }
-
-$vkInstance = create_mailings_instance();
-
-// $vkInstance->vk_mailings_create_new_mailings_action();
-// vk_mailings_create_new_mailings_action();
+create_mailings_instance();
