@@ -17,7 +17,7 @@ class Mailings {
     function get_distributions()
     {
         global $wpdb;
-
+    
         if (!get_option('subscribed_users')) {
           // no subscribed users in DB yet
           return array('campaigns' => array(), 'overall' => array());
@@ -184,7 +184,7 @@ class Mailings {
         // Limit share percentages, based on subscriber availability
         $campaign_share_sum = 1;
         $limit_per_day = get_option('subscribed_users') / 7;
-
+       
         foreach ($campaigns as $campaign_index => &$campaign) {
             $limit_per_campaign = round($campaign['share'] * $limit_per_day);
             $fresh_ids = count($this->get_fresh_subscribers_for_campaign($campaign['id'], $limit_per_campaign));
@@ -254,6 +254,8 @@ class Mailings {
         $ids = array_map(function($el) {
             return +$el;
         }, $response);
+        error_log('inside get_fresh_subscribers_for_campaign');
+        var_dump($ids);
         return $ids;
     }
 
@@ -394,7 +396,7 @@ function vk_mailings_update_subscribed_users_count_action() {
     FROM
         core_subscription AS cs
     WHERE
-        cs.list_id ='+VK_LIST_ID;
+        cs.list_id ='.VK_LIST_ID;
     $response = $ak->query($sql);
     if ($response['success']) {
         $count = $response['data']['user_count'];
@@ -420,7 +422,7 @@ function vk_mailings_sync_subscribers_action() {
     FROM
         core_subscription AS cs
     WHERE
-        cs.list_id ='+VK_LIST_ID;
+        cs.list_id ='.VK_LIST_ID;
     $response = $ak->query($sql, true);
     $ids = array_map(function($el) {
         return +$el['user_id'];
@@ -484,25 +486,30 @@ add_action('vk_mailings_update_mailing_stats', 'vk_mailings_update_mailing_stats
 function vk_mailings_create_new_mailings_action($get_distributions) {
     global $vk_mailings, $wpdb;
 
-    $limit_per_day = get_option('subscribed_users') / 7;
-    // $distributions = $vk_mailings->get_distributions();
-       $distributions = $vk_mailings->$get_distributions();
-       $allCampaigns = trim(preg_replace('/\s+/', ' ',var_export($distributions, true)));
-       error_log('#distributionResults line491 vk_mailings_create_new_mailings_action: '.$allCampaigns);
+       $limit_per_day = get_option('subscribed_users') / 7;
 
+       $distributions = $vk_mailings->$get_distributions();
+    //    $allCampaigns = trim(preg_replace('/\s+/', ' ',var_export($distributions, true)));
+    //    error_log('#distributionResults line491 vk_mailings_create_new_mailings_action: '.$allCampaigns);
+       
     foreach ($distributions['campaigns'] as $campaign) {
+      
         $id = $campaign['id'];
         $fields = $campaign['fields'];
         $url = get_permalink($id);
         $limit_per_campaign = round($campaign['share'] * $limit_per_day);
+    
         $fresh_ids = $vk_mailings->get_fresh_subscribers_for_campaign($id, $limit_per_campaign);
-
+        
+        $all_ids = trim(preg_replace('/\s+/', ' ',var_export($distributions, true)));
+        error_log('#distributionResults line491 vk_mailings_create_new_mailings_action: '.$all_ids);
+        
         // Out of users to send to?
         if (count($fresh_ids) == 0) {
             continue;
         } 
-       
-
+        
+        
         // Send mailing for each enabled subject
         foreach ($campaign['subjects'] as $index => $subject) {
            
