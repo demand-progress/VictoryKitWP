@@ -215,11 +215,16 @@ class Mailings {
                 return -1;
             }
         });
- 
-        return array(
+        
+
+        $allInfo = array(
             'campaigns' => $campaigns,
             'overall' => $overall,
-        ); 
+        );
+
+        // echo '<pre>'; print_r($allInfo); echo '</pre>';
+
+        return $allInfo; 
     }
 
     // Get all subscribers who have not been mailed for this campaign AND have not been mailed for any campaign within the last week
@@ -476,14 +481,14 @@ add_action('vk_mailings_update_mailing_stats', 'vk_mailings_update_mailing_stats
 
 // Create new mailings based on the currently running campaigns
 //   Run once a day at 8am
-function vk_mailings_create_new_mailings_action() {
+function vk_mailings_create_new_mailings_action($get_distributions) {
     global $vk_mailings, $wpdb;
 
     $limit_per_day = get_option('subscribed_users') / 7;
-    $distributions = $vk_mailings->get_distributions();
-
-        $allCampaigns = trim(preg_replace('/\s+/', ' ',var_export($distributions, true)));
-        error_log('#distributionResults vk_mailings_create_new_mailings_action: '.$allCampaigns);
+    // $distributions = $vk_mailings->get_distributions();
+       $distributions = $vk_mailings->$get_distributions();
+       $allCampaigns = trim(preg_replace('/\s+/', ' ',var_export($distributions, true)));
+       error_log('#distributionResults line491 vk_mailings_create_new_mailings_action: '.$allCampaigns);
 
     foreach ($distributions['campaigns'] as $campaign) {
         $id = $campaign['id'];
@@ -495,10 +500,12 @@ function vk_mailings_create_new_mailings_action() {
         // Out of users to send to?
         if (count($fresh_ids) == 0) {
             continue;
-        }
+        } 
+       
 
         // Send mailing for each enabled subject
         foreach ($campaign['subjects'] as $index => $subject) {
+           
             $share = round($subject['share'] * $limit_per_campaign);
 
             // Skip disabled subjects
@@ -544,6 +551,7 @@ function vk_mailings_create_new_mailings_action() {
             }
         }
     }
+   return $distributions; 
 }
 add_action('vk_mailings_create_new_mailings', 'vk_mailings_create_new_mailings_action');
 
