@@ -45,7 +45,7 @@ final class mailingsClass extends TestCase
                 // $vk_mailings->expects($this->exactly(2))
                 //             ->method('send');
     
-                $result = vk_mailings_create_new_mailings_action();
+                $result = vk_mailings_create_new_mailings_action($vk_mailings_mock);
    
                 $this->assertFalse($result === false);
             }
