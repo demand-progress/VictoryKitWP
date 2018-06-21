@@ -71,8 +71,9 @@ class Mailings {
             GROUP BY
                 vkm.campaign_id, vkm.variation_subject
         ', ARRAY_A);
-
+        
         foreach ($mailings as $mailing) {
+           
             $id = $mailing['campaign_id'];
 
             // Make sure to only include currently published campaigns in overall data
@@ -254,8 +255,10 @@ class Mailings {
         $ids = array_map(function($el) {
             return +$el;
         }, $response);
-        error_log('inside get_fresh_subscribers_for_campaign');
-        var_dump($ids);
+
+        $all_ids = trim(preg_replace('/\s+/', ' ',var_export($ids, true)));
+        error_log('#distributionResults line259 get_fresh_subscribers_for_campaign: '.$all_ids);
+        
         return $ids;
     }
 
@@ -483,82 +486,88 @@ add_action('vk_mailings_update_mailing_stats', 'vk_mailings_update_mailing_stats
 
 // Create new mailings based on the currently running campaigns
 //   Run once a day at 8am
-function vk_mailings_create_new_mailings_action($get_distributions) {
+function vk_mailings_create_new_mailings_action($vk_mailings_instance) {
     global $vk_mailings, $wpdb;
-
-       $limit_per_day = get_option('subscribed_users') / 7;
-
-       $distributions = $vk_mailings->$get_distributions();
-    //    $allCampaigns = trim(preg_replace('/\s+/', ' ',var_export($distributions, true)));
-    //    error_log('#distributionResults line491 vk_mailings_create_new_mailings_action: '.$allCampaigns);
-       
-    foreach ($distributions['campaigns'] as $campaign) {
-      
-        $id = $campaign['id'];
-        $fields = $campaign['fields'];
-        $url = get_permalink($id);
-        $limit_per_campaign = round($campaign['share'] * $limit_per_day);
     
-        $fresh_ids = $vk_mailings->get_fresh_subscribers_for_campaign($id, $limit_per_campaign);
+       $limit_per_day = get_option('subscribed_users') / 7;
+       
+       if ($vk_mailings_instance === ''){
+        $distributions = $vk_mailings->get_distributions();
+       } else {
+        $distributions = $vk_mailings_instance->get_distributions();
+       }
+       
+       $allCampaigns = trim(preg_replace('/\s+/', ' ',var_export($distributions, true)));
+       error_log('#distributionResults line494 vk_mailings_create_new_mailings_action: '.$allCampaigns);
+       
+//     foreach ($distributions['campaigns'] as $campaign) {
+
+//         $id = $campaign['id'];
+//         $fields = $campaign['fields'];
+//         $url = get_permalink($id);
+//         $limit_per_campaign = round($campaign['share'] * $limit_per_day);
         
-        $all_ids = trim(preg_replace('/\s+/', ' ',var_export($distributions, true)));
-        error_log('#distributionResults line491 vk_mailings_create_new_mailings_action: '.$all_ids);
+//         $fresh_ids = $vk_mailings->get_fresh_subscribers_for_campaign($id, $limit_per_campaign);
         
-        // Out of users to send to?
-        if (count($fresh_ids) == 0) {
-            continue;
-        } 
+//         // $all_ids = trim(preg_replace('/\s+/', ' ',var_export($distributions, true)));
+//         // error_log('#distributionResults line491 vk_mailings_create_new_mailings_action: '.$all_ids);
+        
+//         // Out of users to send to?
+//         //code to stop count--> currently stops entire function from running
+//         if (count($fresh_ids) == 0) {
+//             continue;
+//         } 
         
         
-        // Send mailing for each enabled subject
-        foreach ($campaign['subjects'] as $index => $subject) {
+//         // Send mailing for each enabled subject
+//         foreach ($campaign['subjects'] as $index => $subject) {
            
-            $share = round($subject['share'] * $limit_per_campaign);
+//             $share = round($subject['share'] * $limit_per_campaign);
 
-            // Skip disabled subjects
-            if ($share == 0) {
-                continue;
-            }
+//             // Skip disabled subjects
+//             if ($share == 0) {
+//                 continue;
+//             }
 
-            // Claim IDs
-            $subscribers = array_splice($fresh_ids, 0, $share);
+//             // Claim IDs
+//             $subscribers = array_splice($fresh_ids, 0, $share);
 
-            // Create mailing
-            $params = array(
-                'from_line' => $fields['from_line'],
-                'body' => str_replace('&#8221;', '"', $fields['body']),
-                'petition_headline' => str_replace('&#8221;', '"', $fields['petition_headline']),
-                'campaign_id' => $id,
-                'limit' => $share,
-                'salutation' => str_replace('&#8221;', '"', $fields['salutation']),
-                'subject' => $fields['subjects'][$index]['subject'],
-                'subscribers' => $subscribers,
-                'url' => $url,
-                'variation_subject' => $index,
-            );
+//             // Create mailing
+//             $params = array(
+//                 'from_line' => $fields['from_line'],
+//                 'body' => str_replace('&#8221;', '"', $fields['body']),
+//                 'petition_headline' => str_replace('&#8221;', '"', $fields['petition_headline']),
+//                 'campaign_id' => $id,
+//                 'limit' => $share,
+//                 'salutation' => str_replace('&#8221;', '"', $fields['salutation']),
+//                 'subject' => $fields['subjects'][$index]['subject'],
+//                 'subscribers' => $subscribers,
+//                 'url' => $url,
+//                 'variation_subject' => $index,
+//             );
 
-            $response = $vk_mailings->send($params);
+//             $response = $vk_mailings->send($params);
 
-            // Save mailing records for VK
-            $ak_mailing_id = $response['ak_mailing_id'];
-            $subscriber_chunks = array_chunk($subscribers, 1000); // Chunk so SQL queries dont get too big
-            foreach ($subscriber_chunks as $subscriber_chunk) {
-                $values = array();
-                foreach ($subscriber_chunk as $subscriber) {
-                    $values[] = "($subscriber, $ak_mailing_id, $id)";
-                }
-                $values = join(', ', $values);
-                $sql = "
-                INSERT INTO vk_subscriber_mailing
-                (ak_user_id, ak_mailing_id, campaign_id)
-                VALUES
-                $values;
-                ";
-                $wpdb->query($sql);
-            }
-        }
-    }
-   return $distributions; 
+//             // Save mailing records for VK
+//             $ak_mailing_id = $response['ak_mailing_id'];
+//             $subscriber_chunks = array_chunk($subscribers, 1000); // Chunk so SQL queries dont get too big
+//             foreach ($subscriber_chunks as $subscriber_chunk) {
+//                 $values = array();
+//                 foreach ($subscriber_chunk as $subscriber) {
+//                     $values[] = "($subscriber, $ak_mailing_id, $id)";
+//                 }
+//                 $values = join(', ', $values);
+//                 $sql = "
+//                 INSERT INTO vk_subscriber_mailing
+//                 (ak_user_id, ak_mailing_id, campaign_id)
+//                 VALUES
+//                 $values;
+//                 ";
+//                 $wpdb->query($sql);
+//             }
+//         }
+//     }
+//    return $distributions; 
 }
 add_action('vk_mailings_create_new_mailings', 'vk_mailings_create_new_mailings_action');
 
