@@ -175,9 +175,14 @@ $TwoCampaigns = array (
                                                                                                                           'title' => 'stop the fcc', 
                                                                                                                           'valid' => true, 'rate' => 0.98812276437224555, 'share' => 0.0, 
                                                                                                                           'limit' => 0, 
+                                                                                                                            ),
                                                                                                                         ),
-                                                                                                                        ), 'overall' => 
-                                                                                                                         array (
+                                                                                                                         'overall' => 
+                                                                                                                            array (
                                                                                                                               'conversions' => 0, 
-                                                                                                                              'losses' => 0, 'sent' => 5, 'boost' => 500, 'rate' => 0.99009900990099009, ), 
+                                                                                                                              'losses' => 0, 
+                                                                                                                              'sent' => 5, 
+                                                                                                                              'boost' => 500, 
+                                                                                                                              'rate' => 0.99009900990099009, 
+                                                                                                                            ), 
                                                                                                                          );
