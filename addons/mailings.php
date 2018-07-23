@@ -17,7 +17,7 @@ class Mailings {
     function get_distributions()
     {
         global $wpdb;
-    
+
         if (!get_option('subscribed_users')) {
           // no subscribed users in DB yet
           return array('campaigns' => array(), 'overall' => array());
@@ -29,6 +29,7 @@ class Mailings {
             'post_type' => 'campaign',
             'post_status' => 'publish',
         ));
+
         foreach ($results->posts as $campaign) {
             $id = $campaign->ID;
             $campaigns[$id] = array(
@@ -71,9 +72,9 @@ class Mailings {
             GROUP BY
                 vkm.campaign_id, vkm.variation_subject
         ', ARRAY_A);
-        
+
+
         foreach ($mailings as $mailing) {
-           
             $id = $mailing['campaign_id'];
 
             // Make sure to only include currently published campaigns in overall data
@@ -107,19 +108,29 @@ class Mailings {
 
         // Overall rate
         $overall['rate'] = ($overall['conversions'] - $overall['losses'] + $boost) / ($overall['sent'] + $boost);
+        
+        // $camp = trim(preg_replace('/\s+/', ' ',var_export( $campaigns, true)));
+        // error_log('line 199 campaigns setting stats overall with boost '.$camp);
+        // $arrayThing = ARRAY_A;
+        // $aThing = trim(preg_replace('/\s+/', ' ',var_export( $arrayThing, true)));
+        // error_log('line 80 Array_A value '.$aThing);    
+        
         if ($overall['rate'] < 0) {
             $overall['rate'] = 0; // TODO: why would we not track negative results?
         }
 
         // Calculate shares
         $campaign_rate_sum = 0;
+
+
         foreach ($campaigns as $campaign_index => &$campaign) {
             // Subjects
             $fields = $campaign['fields'];
             $subject_rate_sum = 0;
             $valid_subjects = 0;
 
-            foreach ($campaign['subjects'] as $subject_index => &$subject) {
+            
+            foreach ($campaign['subjects'] as $subject_index => &$subject) { 
                 $enabled = $fields['subjects'][$subject_index]['enabled'];
                 $subject['title'] = $fields['subjects'][$subject_index]['subject'];
                 if (!$enabled) {
@@ -185,12 +196,16 @@ class Mailings {
         // Limit share percentages, based on subscriber availability
         $campaign_share_sum = 1;
         $limit_per_day = get_option('subscribed_users') / 7;
-       
+
         foreach ($campaigns as $campaign_index => &$campaign) {
             $limit_per_campaign = round($campaign['share'] * $limit_per_day);
+            // $limit = trim(preg_replace('/\s+/', ' ',var_export($limit_per_campaign, true)));
+            // error_log('line 192 limit_per_campaign '.$limit);
             $fresh_ids = count($this->get_fresh_subscribers_for_campaign($campaign['id'], $limit_per_campaign));
-
+            // $fresh = trim(preg_replace('/\s+/', ' ',var_export($fresh_ids, true)));
+            // error_log('line 195 fresh ids '.$fresh);
             // Plenty? Great.
+            //fresh ids should not be 0 
             if ($fresh_ids >= $limit_per_campaign) {
                 $campaign['limit'] = $limit_per_campaign;
                 continue;
@@ -198,9 +213,17 @@ class Mailings {
 
             // Shortage of fresh IDs. Calculations are required.
             $campaign['limit'] = $fresh_ids;
+            //CURRENTLY RETURNING 0 FOR $SHARE THIS IS MAKING A NAN VALUE
             $share = $fresh_ids / $limit_per_day;
+            
             $campaign_share_sum += $share - $campaign['share'];
+
             $campaign['share'] = $share;
+
+            // $campShare = $campaign['share'];
+            // $allsql = trim(preg_replace('/\s+/', ' ',var_export( $campShare, true)));
+            // error_log('line 225 $campaign_share_sum '.$campaign_share_sum);
+            // error_log('line 226 variable campaing[share] '.$share);
         }
         foreach ($campaigns as $campaign_index => &$campaign) {
             $campaign['share'] = $campaign['share'] / $campaign_share_sum;
@@ -216,23 +239,18 @@ class Mailings {
                 return -1;
             }
         });
-        
 
-        $allInfo = array(
+        return array(
             'campaigns' => $campaigns,
             'overall' => $overall,
         );
-
-        // echo '<pre>'; print_r($allInfo); echo '</pre>';
-
-        return $allInfo; 
     }
 
     // Get all subscribers who have not been mailed for this campaign AND have not been mailed for any campaign within the last week
     function get_fresh_subscribers_for_campaign($campaign_id, $limit)
     {
         global $wpdb;
-    
+
         $sql = "
         SELECT
             vks.ak_user_id
@@ -251,21 +269,15 @@ class Mailings {
             vksm.ak_user_id IS NULL
         LIMIT $limit;
         ";
-        $sqlReturn = trim(preg_replace('/\s+/', ' ',var_export($sql, true)));
-        error_log('#sql return line 255: '.$sqlReturn);
-    
-        $response = $wpdb->get_col($sql, 0);
 
-        $responseWP = trim(preg_replace('/\s+/', ' ',var_export($response, true)));
-        error_log('#get_col reponse line 260'.$responseWP);
+        // $allsql = trim(preg_replace('/\s+/', ' ',var_export( $sql, true)));
+        // error_log('line 260 sql query '.$allsql);
+                
+        $response = $wpdb->get_col($sql, 0);
 
         $ids = array_map(function($el) {
             return +$el;
         }, $response);
-
-        // $all_ids = trim(preg_replace('/\s+/', ' ',var_export($ids, true)));
-        // error_log('#distributionResults line259 get_fresh_subscribers_for_campaign: '.$all_ids);
-        
         return $ids;
     }
 
@@ -343,54 +355,56 @@ class Mailings {
         ) {
             return;
         }
-
+    // $distributions_results = trim(preg_replace('/\s+/', ' ',var_export( $params, true)));
+    // error_log('@@@ line 359 '.$distributions_results);
         // Render
         $html = $this->render($params);
 
-        // global $ak;
-        // $response = $ak->request(array(
-        //     'path' => 'mailer',
-        //     'method' => 'post',
-        //     'data' => array(
-        //         'fromline' => "/rest/v1/fromline/{$params['from_line']}/",
-        //         'subjects' => array($params['subject']),
-        //         'notes' => 'Generated by VictoryKit',
-        //         'emailwrapper' => 27, // Demand Progress wrapper
-        //         'includes' => array(
-        //             'lists' => array(VK_LIST_ID), // VK list. TODO: store this as a constant somewhere
-        //             'users' => $params['subscribers'], // Subscribers
-        //         ),
-        //         'limit' => $params['limit'], // Limit users per mailing
-        //         // 'excludes' => array(
-        //         //     'mailings' => $mailings, // Array of mailing IDs, for avoiding multiple sends
-        //         // ),
-        //         'tags' => array('victorykit'),
-        //         'html' => $html,
-        //         'sort_by' => 'random',
-        //     ),
-        // ));
+        global $ak;
+        error_log('@@@ limit_per_day variable '.$ak);
+        $response = $ak->request(array(
+            'path' => 'mailer',
+            'method' => 'post',
+            'data' => array(
+                'fromline' => "/rest/v1/fromline/{$params['from_line']}/",
+                'subjects' => array($params['subject']),
+                'notes' => 'Generated by VictoryKit',
+                'emailwrapper' => 27, // Demand Progress wrapper
+                'includes' => array(
+                    'lists' => array(VK_LIST_ID), // VK list. TODO: store this as a constant somewhere
+                    'users' => $params['subscribers'], // Subscribers
+                ),
+                'limit' => $params['limit'], // Limit users per mailing
+                // 'excludes' => array(
+                //     'mailings' => $mailings, // Array of mailing IDs, for avoiding multiple sends
+                // ),
+                'tags' => array('victorykit'),
+                'html' => $html,
+                'sort_by' => 'random',
+            ),
+        ));
 
-        // $location = $response['headers']->getAll()['location'];
-        // preg_match('%/(\d+)/$%', $location, $matches);
-        // $ak_mailing_id = +$matches[1];
+        $location = $response['headers']->getAll()['location'];
+        preg_match('%/(\d+)/$%', $location, $matches);
+        $ak_mailing_id = +$matches[1];
 
-        // $response = $ak->request(array(
-        //     'path' => "mailer/$ak_mailing_id/rebuild",
-        //     'method' => 'post',
-        //     'data' => array(),
-        // ));
+        $response = $ak->request(array(
+            'path' => "mailer/$ak_mailing_id/rebuild",
+            'method' => 'post',
+            'data' => array(),
+        ));
 
-        // $response['ak_mailing_id'] = $ak_mailing_id;
+        $response['ak_mailing_id'] = $ak_mailing_id;
 
-        // global $wpdb;
-        // $wpdb->insert('vk_mailing', array(
-        //     'ak_mailing_id' => $ak_mailing_id,
-        //     'campaign_id' => $params['campaign_id'],
-        //     'status' => 'rebuilding',
-        //     'variation_subject' => $params['variation_subject'],
-        // ));
+        global $wpdb;
+        $wpdb->insert('vk_mailing', array(
+            'ak_mailing_id' => $ak_mailing_id,
+            'campaign_id' => $params['campaign_id'],
+            'status' => 'rebuilding',
+            'variation_subject' => $params['variation_subject'],
+        ));
 
-        // return $response;
+        return $response;
     }
 }
 
@@ -399,15 +413,18 @@ class Mailings {
 // Update total count of subscribers in VictoryKit list
 //   Run every 12 hours
 function vk_mailings_update_subscribed_users_count_action() {
+    
     global $ak;
-    $sql = '
+    
+    $sql = "
     SELECT
         COUNT(DISTINCT cs.id) AS user_count
     FROM
         core_subscription AS cs
     WHERE
-        cs.list_id ='.VK_LIST_ID;
+        cs.list_id =".VK_LIST_ID;
     $response = $ak->query($sql);
+
     if ($response['success']) {
         $count = $response['data']['user_count'];
     } else {
@@ -432,7 +449,8 @@ function vk_mailings_sync_subscribers_action() {
     FROM
         core_subscription AS cs
     WHERE
-        cs.list_id ='.VK_LIST_ID;
+        cs.list_id ='.VK_LIST_ID
+    ;
     $response = $ak->query($sql, true);
     $ids = array_map(function($el) {
         return +$el['user_id'];
@@ -493,50 +511,45 @@ add_action('vk_mailings_update_mailing_stats', 'vk_mailings_update_mailing_stats
 
 // Create new mailings based on the currently running campaigns
 //   Run once a day at 8am
-function vk_mailings_create_new_mailings_action($vk_mailings_instance) {
+function vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock) {
     global $vk_mailings, $wpdb;
 
-        if ($vk_mailings_instance !== ''){
-            $vk_mailings = $vk_mailings_instance;
-        }
-        
-       $limit_per_day = get_option('subscribed_users') / 7;
-       error_log('limit per day'.$limit_per_day );
-       $distributions = $vk_mailings->get_distributions();
-       $allCampaigns = trim(preg_replace('/\s+/', ' ',var_export($distributions, true)));
-       error_log('#distributionResults line494 vk_mailings_create_new_mailings_action: '.$allCampaigns);
-       
-    foreach ($distributions['campaigns'] as $campaign) {
+    if($vk_mailings_mock){
+        $vk_mailings = $vk_mailings_mock;
+        $wpdb = $wpdb_mock;
+    } 
 
+    $limit_per_day = get_option('subscribed_users') / 7;
+    
+    $distributions = $vk_mailings->get_distributions();
+    // $distributions_results = trim(preg_replace('/\s+/', ' ',var_export( $distributions, true)));
+    // $distributions_results = sizeof($distributions_results);
+    // error_log('@@@ limit_per_day variable '.$distributions_results);
+    foreach ($distributions['campaigns'] as $campaign) {
         $id = $campaign['id'];
         $fields = $campaign['fields'];
         $url = get_permalink($id);
-
-        print($campaign['share']);
-        print('    %%%%%   ');
-        print($limit_per_day);
+        //need to print out why $limit_per_campaign NAN -> this is breaking everything
+        // $allsql = trim(preg_replace('/\s+/', ' ',var_export( $campaign, true)));
+        // error_log('%%%%%%%%%%% ');
+        // error_log('line 531 $campaign '.$allsql);
+        $shares = $campaign['share'];
+        // $sCamp = trim(preg_replace('/\s+/', ' ',var_export( $shares, true)));
+        // error_log('line 535 campaign[share] variable '.$sCamp);
         $limit_per_campaign = round($campaign['share'] * $limit_per_day);
-        
+       
         $fresh_ids = $vk_mailings->get_fresh_subscribers_for_campaign($id, $limit_per_campaign);
-         
-        // $all_ids = trim(preg_replace('/\s+/', ' ',var_export($distributions, true)));
-        // error_log('#distributionResults line491 vk_mailings_create_new_mailings_action: '.$all_ids);
-        
+ 
         // Out of users to send to?
-        //code to stop count--> currently stops entire function from running
         if (count($fresh_ids) == 0) {
             continue;
-        } 
-        
+        }
+       
         // Send mailing for each enabled subject
         foreach ($campaign['subjects'] as $index => $subject) {
-            
             $share = round($subject['share'] * $limit_per_campaign);
-
+           
             // Skip disabled subjects
-            // print($subject['share']);
-            // print('    %%%%%   ');
-            // print($limit_per_campaign);
             if ($share == 0) {
                 continue;
             }
@@ -557,13 +570,19 @@ function vk_mailings_create_new_mailings_action($vk_mailings_instance) {
                 'url' => $url,
                 'variation_subject' => $index,
             );
-            
-            $response = $vk_mailings->send($params);
 
+            // $allsql = trim(preg_replace('/\s+/', ' ',var_export( $params, true)));
+            // error_log('s line 563: '.$allsql);
+            // $sCamp = trim(preg_replace('/\s+/', ' ',var_export( $params, true)));
+            // error_log('$$$$$$$$');
+            // error_log('line 550 $subject variable '.$sCamp);
+            $response = $vk_mailings->send($params);
+           
             // Save mailing records for VK
             $ak_mailing_id = $response['ak_mailing_id'];
             $subscriber_chunks = array_chunk($subscribers, 1000); // Chunk so SQL queries dont get too big
             foreach ($subscriber_chunks as $subscriber_chunk) {
+          
                 $values = array();
                 foreach ($subscriber_chunk as $subscriber) {
                     $values[] = "($subscriber, $ak_mailing_id, $id)";
@@ -579,7 +598,6 @@ function vk_mailings_create_new_mailings_action($vk_mailings_instance) {
             }
         }
     }
-//    return $distributions; 
 }
 add_action('vk_mailings_create_new_mailings', 'vk_mailings_create_new_mailings_action');
 
@@ -786,3 +804,7 @@ function create_mailings_instance() {
 }
 
 create_mailings_instance();
+
+// do_action('vk_mailings_create_new_mailings');
+// $allsql = trim(preg_replace('/\s+/', ' ',var_export( $mailings, true)));
+// error_log('sql mailing_stats line 468: '.$allsql);
