@@ -21,7 +21,7 @@ function vk_analytics_admin_page_render() {
     global $vk_mailings;
 
     // Calculate distributions
-    $distributions = $vk_mailings->get_distributions();
+    $distributions = $vk_mailings->get_distributions(0, 0);
     foreach ($distributions['campaigns'] as &$campaign) {
       unset($campaign['fields']);
     }
