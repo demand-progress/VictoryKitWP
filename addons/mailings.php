@@ -3,6 +3,7 @@
 // Exit if accessed directly
 if(!defined('ABSPATH')) exit;
 require_once(__DIR__. '/../constants.php');
+require_once(__DIR__. '/mockClasses/mailingsHelpers.php');
 // Display errors
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
@@ -14,9 +15,15 @@ class Mailings {
         // ...
     }
 
-    function get_distributions()
+    function get_distributions($wpdb_mock, $mh_mock)
     {
         global $wpdb;
+        global $mh;
+        print('in on line 22 get_distributions@@@@    ');
+        if($wpdb_mock){
+            $wpdb = $wpdb_mock;
+            $mh = $mh_mock; 
+        } 
 
         if (!get_option('subscribed_users')) {
           // no subscribed users in DB yet
@@ -25,34 +32,14 @@ class Mailings {
 
         // Get active campaigns
         $campaigns = array();
-        $results = new WP_Query(array(
-            'post_type' => 'campaign',
-            'post_status' => 'publish',
-        ));
 
-        foreach ($results->posts as $campaign) {
-            $id = $campaign->ID;
-            $campaigns[$id] = array(
-                'conversions' => 0,
-                'fields' => get_fields($id),
-                'id' => $id,
-                'losses' => 0,
-                'sent' => 0,
-                'subjects' => array(),
-                'title' => $campaign->post_title,
-                'valid' => true,
-            );
+        $results = $mh->wp_query_posts();
+       
+        // $results1 = trim(preg_replace('/\s+/', ' ',var_export( $results, true)));
+        // var_dump($results1);
 
-            // Get all subjects
-            $subjects = $campaigns[$id]['fields']['subjects'];
-            for ($i = 0; $i < count($subjects); $i++) {
-                $campaigns[$id]['subjects'][$i] = array(
-                    'conversions' => 0,
-                    'losses' => 0,
-                    'sent' => 0,
-                );
-            }
-        }
+        // var_dump($mh);
+        $campaigns = $mh->setUpCampaigns($results, $campaigns, $mh_mock);
 
         // Get campaign performance
         $overall = array(
@@ -60,20 +47,13 @@ class Mailings {
             'losses' => 0,
             'sent' => 0,
         );
-        $mailings = $wpdb->get_results('
-            SELECT
-                vkm.campaign_id,
-                vkm.variation_subject,
-                SUM(vkm.conversions) as conversions,
-                SUM(vkm.losses) as losses,
-                SUM(vkm.sent) as sent
-            FROM
-                vk_mailing AS vkm
-            GROUP BY
-                vkm.campaign_id, vkm.variation_subject
-        ', ARRAY_A);
 
+        $mailings = $mh->get_mailings_results_wpdb($wpdb);
 
+       //need to print error log here
+       $mailingsPrint = trim(preg_replace('/\s+/', ' ',var_export( $mailings, true)));
+       error_log('line 54 return value of get_results '.$mailingsPrint);
+       
         foreach ($mailings as $mailing) {
             $id = $mailing['campaign_id'];
 
@@ -121,7 +101,6 @@ class Mailings {
 
         // Calculate shares
         $campaign_rate_sum = 0;
-
 
         foreach ($campaigns as $campaign_index => &$campaign) {
             // Subjects
@@ -187,6 +166,9 @@ class Mailings {
             return $campaign['valid'];
         });
 
+        $campaigns1 = trim(preg_replace('/\s+/', ' ',var_export( $campaigns, true)));
+        error_log('line 197 campaigns after array_filter function '.$campaigns1);
+
         // Get share percentages
         foreach ($campaigns as $campaign_index => &$campaign) {
             $share = $campaign_rate_sum ? $campaign['rate'] / $campaign_rate_sum : 0;
@@ -197,13 +179,18 @@ class Mailings {
         $campaign_share_sum = 1;
         $limit_per_day = get_option('subscribed_users') / 7;
 
+        $limit_per_day1 = trim(preg_replace('/\s+/', ' ',var_export( $limit_per_day, true)));
+        error_log('line 210 return value of get_options function'.$limit_per_day1);
+
         foreach ($campaigns as $campaign_index => &$campaign) {
             $limit_per_campaign = round($campaign['share'] * $limit_per_day);
             // $limit = trim(preg_replace('/\s+/', ' ',var_export($limit_per_campaign, true)));
             // error_log('line 192 limit_per_campaign '.$limit);
             $fresh_ids = count($this->get_fresh_subscribers_for_campaign($campaign['id'], $limit_per_campaign));
-            // $fresh = trim(preg_replace('/\s+/', ' ',var_export($fresh_ids, true)));
-            // error_log('line 195 fresh ids '.$fresh);
+            
+            $fresh_ids1 = trim(preg_replace('/\s+/', ' ',var_export( $fresh_ids, true)));
+            error_log('line 222 return value of get_fresh_subscribers_for_campaign function'.$fresh_ids1);
+
             // Plenty? Great.
             //fresh ids should not be 0 
             if ($fresh_ids >= $limit_per_campaign) {
@@ -239,6 +226,12 @@ class Mailings {
                 return -1;
             }
         });
+
+        $campaigns1 = trim(preg_replace('/\s+/', ' ',var_export( $campaigns, true)));
+        error_log('line 262 $campaigns'.$campaigns1);
+
+        $overall1 = trim(preg_replace('/\s+/', ' ',var_export( $overall, true)));
+        error_log('line 264 $overall'.$overall1);
 
         return array(
             'campaigns' => $campaigns,
@@ -521,7 +514,7 @@ function vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock) {
 
     $limit_per_day = get_option('subscribed_users') / 7;
     
-    $distributions = $vk_mailings->get_distributions();
+    $distributions = $vk_mailings->get_distributions(0, 0);
     // $distributions_results = trim(preg_replace('/\s+/', ' ',var_export( $distributions, true)));
     // $distributions_results = sizeof($distributions_results);
     // error_log('@@@ limit_per_day variable '.$distributions_results);
