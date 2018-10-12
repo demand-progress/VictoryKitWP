@@ -40,116 +40,126 @@ use PHPUnit\Framework\TestCase;
 
 final class mailingsClass extends TestCase
     {   
-        // public function test_vk_mailings_create_new_mailings_action_two_campaigns(): void {   
-        //     global $TwoCampaigns;
+        public function test_vk_mailings_create_new_mailings_action_two_campaigns(): void 
+        {   
+            global $TwoCampaigns;
 
-        //     $vk_mailings_mock = $this->createMock(Mailings::class);
-        //     $wpdb_mock = $this->createMock(wpdb::class);
+            $vk_mailings_mock = $this->createMock(Mailings::class);
+            $wpdb_mock = $this->createMock(wpdb::class);
         
-        //     $vk_mailings_mock->expects($this->once())
-        //         ->method('get_distributions')
-        //         ->willReturn($TwoCampaigns);
+            $vk_mailings_mock->expects($this->once())
+                ->method('get_distributions')
+                ->willReturn($TwoCampaigns);
                     
-        //     $vk_mailings_mock->expects($this->exactly(2))
-        //         ->method('get_fresh_subscribers_for_campaign')
-        //         ->willReturn(array( 0 => 6630470, 1 => 6630472,));
+            $vk_mailings_mock->expects($this->exactly(2))
+                ->method('get_fresh_subscribers_for_campaign')
+                ->willReturn(array( 0 => 6630470, 1 => 6630472,));
 
-        //     $vk_mailings_mock->expects($this->exactly(3))
-        //         ->method('send');
+            $vk_mailings_mock->expects($this->exactly(3))
+                ->method('send');
 
-        //     $wpdb_mock->expects($this->exactly(1))
-        //         ->method('query');
+            $wpdb_mock->expects($this->exactly(1))
+                ->method('query');
 
-        //     $result = vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock);
-        //     // $this->assertTrue($result === null);
-        // }
+            $result = vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock);
+            // $this->assertTrue($result === null);
+        }
 
-        // public function test_vk_mailings_create_new_mailings_action_one_campaigns(): void {   
-        //     global $singleCampaign;
+        public function test_vk_mailings_create_new_mailings_action_one_campaigns(): void 
+        {   
+            global $singleCampaign;
 
-        //     $vk_mailings_mock = $this->createMock(Mailings::class);
-        //     $wpdb_mock = $this->createMock(wpdb::class);
+            $vk_mailings_mock = $this->createMock(Mailings::class);
+            $wpdb_mock = $this->createMock(wpdb::class);
         
-        //     $vk_mailings_mock->expects($this->once())
-        //         ->method('get_distributions')
-        //         ->willReturn($singleCampaign);
+            $vk_mailings_mock->expects($this->once())
+                ->method('get_distributions')
+                ->willReturn($singleCampaign);
                 
-        //     $vk_mailings_mock->expects($this->exactly(1))
-        //         ->method('get_fresh_subscribers_for_campaign')
-        //         ->willReturn(array( 0 => 6630470, 1 => 6630472,));
+            $vk_mailings_mock->expects($this->exactly(1))
+                ->method('get_fresh_subscribers_for_campaign')
+                ->willReturn(array( 0 => 6630470, 1 => 6630472,));
 
-        //     $vk_mailings_mock->expects($this->exactly(2))
-        //         ->method('send');
+            $vk_mailings_mock->expects($this->exactly(2))
+                ->method('send');
 
-        //     $wpdb_mock->expects($this->exactly(1))
-        //         ->method('query');
+            $wpdb_mock->expects($this->exactly(1))
+                ->method('query');
 
-        //     vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock); 
-        // }
+            vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock); 
+        }
 
-        // public function test_get_distribution_two_subject_campaign(): void {   
-        //     global $twoSubjectCampaign;
+        public function test_get_distribution_two_subject_campaign(): void 
+        {   
+            global $twoSubjectCampaign;
 
-        //     $vk_mailings_mock = $this->createMock(Mailings::class);
-        //     $wpdb_mock = $this->createMock(wpdb::class);
+            $vk_mailings_mock = $this->createMock(Mailings::class);
+            $wpdb_mock = $this->createMock(wpdb::class);
 
-        //     $vk_mailings_mock->expects($this->once())
-        //         ->method('get_distributions')
-        //         ->willReturn($twoSubjectCampaign);
+            $vk_mailings_mock->expects($this->once())
+                ->method('get_distributions')
+                ->willReturn($twoSubjectCampaign);
                    
-        //     $vk_mailings_mock->expects($this->exactly(1))
-        //         ->method('get_fresh_subscribers_for_campaign')
-        //         ->willReturn(array( 0 => 6630470, 1 => 6630472,));
+            $vk_mailings_mock->expects($this->exactly(1))
+                ->method('get_fresh_subscribers_for_campaign')
+                ->willReturn(array( 0 => 6630470, 1 => 6630472,));
 
-        //     $vk_mailings_mock->expects($this->exactly(1))
-        //         ->method('send')
-        //         ->willReturn(array ( 'ak_mailing_id' => 1));
+            $vk_mailings_mock->expects($this->exactly(1))
+                ->method('send')
+                ->willReturn(array ( 'ak_mailing_id' => 1));
 
-        //     $wpdb_mock->expects($this->exactly(1))
-        //         ->method('query');
+            $wpdb_mock->expects($this->exactly(1))
+                ->method('query');
 
-        //     vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock);  
-        // }
+            vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock);  
+        }
 
-        // public function test_mailingsHelpers_wp_query_posts_method(): void 
-        // {
-        //     $mailingsMock = new Mailings;
-        //     $mhInstance = $this->createMock(MailingsHelpers::class);
-        //     $wpdb = new wpdb();
-            
-        //     $mhInstance->expects($this->once())
-        //             ->method('wp_query_posts');
+        public function test_mailingsHelpers_wp_query_posts_method(): void 
+        {
+            $mailingsMock = new Mailings();
+            $wpdb = new wpdb();
+            $postObject = new stdClass();
+            $postObject->posts = array(0 => (object) ['ID' => '', 'post_title'=> '']);
 
-        //     $mailingsMock->get_distributions($wpdb, $mhInstance); 
-        // }
+            $mhMock= $this->getMockBuilder(MailingsHelpers::class)
+                        ->setMethods(['wp_query_posts'])
+                        ->getMock();
 
-        // public function test_get_fields(): void 
-        // {
-            // $wpdb = new wpdb();
-            // $postObject = new stdClass();
-            // $postObject->posts = array(0 => (object) ['ID' => '', 'post_title'=> '']);
+            $mhMock->expects($this->once())
+                        ->method('wp_query_posts')
+                        ->will($this->returnValue($postObject));
 
-            // $mhMock= $this->getMockBuilder(MailingsHelpers::class)
-            //              ->setMethods(['wp_query_posts', 'getFields'])
-            //              ->getMock();
-            
-            // $mhMock->expects($this->once())
-            //     ->method('wp_query_posts')
-            //     ->will($this->returnValue($postObject));
+            $mailingsMock->get_distributions($wpdb, $mhMock); 
+        }
 
-            // $mhMock->expects($this->once())
-            //     ->method('getFields');
-           
-            // $subject = new Mailings();
-    
-            // $subject->get_distributions($wpdb, $mhMock);
-        // }
-
-        public function test_mailingsHelpers_setUpCampaigns(): void 
+        public function test_get_fields(): void 
         {
             $wpdb = new wpdb();
             $postObject = new stdClass();
             $postObject->posts = array(0 => (object) ['ID' => '', 'post_title'=> '']);
+
+            $mhMock= $this->getMockBuilder(MailingsHelpers::class)
+                         ->setMethods(['wp_query_posts', 'getFields'])
+                         ->getMock();
+            
+            $mhMock->expects($this->once())
+                ->method('wp_query_posts')
+                ->will($this->returnValue($postObject));
+
+            $mhMock->expects($this->once())
+                ->method('getFields');
+           
+            $subject = new Mailings();
+    
+            $subject->get_distributions($wpdb, $mhMock);
+        }
+
+        public function test_mailingsHelpers_setUpCampaigns(): void 
+        {
+            $wpdb = new wpdb();
+            // $postObject = new stdClass();
+            $postObject = array(0 => (object) ['ID' => '', 'post_title'=> '']);
+            $campaigns = array( 0 => array( 'fields'=> '', 'campaign_id' => '', 'subjects' => array()));
 
             $mhMock= $this->getMockBuilder(MailingsHelpers::class)
                          ->setMethods(['wp_query_posts', 'setUpCampaigns'])
@@ -160,7 +170,27 @@ final class mailingsClass extends TestCase
                 ->will($this->returnValue($postObject));
 
             $mhMock->expects($this->once())
-                ->method('setUpCampaigns');
+                ->method('setUpCampaigns')
+                ->will($this->returnValue($campaigns));
+
+            $subject = new Mailings();
+    
+            $subject->get_distributions($wpdb, $mhMock);
+        }
+
+        public function test_mailingsHelpers_get_mailings_results_wpdb(): void 
+        {
+            $wpdb = new wpdb();
+            // $postObject = new stdClass();
+            $postObject = array( 0 => array( 'campaign_id' => '1'));
+
+            $mhMock= $this->getMockBuilder(MailingsHelpers::class)
+                         ->setMethods(['get_mailings_results_wpdb'])
+                         ->getMock();
+            
+            $mhMock->expects($this->once())
+                ->method('get_mailings_results_wpdb')
+                ->will($this->returnValue($postObject));
            
             $subject = new Mailings();
     
