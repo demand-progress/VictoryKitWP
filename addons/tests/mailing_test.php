@@ -123,23 +123,36 @@ final class mailingsClass extends TestCase
         //     $mailingsMock->get_distributions($wpdb, $mhInstance); 
         // }
 
+        // public function test_get_fields(): void 
+        // {
+            // $wpdb = new wpdb();
+            // $postObject = new stdClass();
+            // $postObject->posts = array(0 => (object) ['ID' => '', 'post_title'=> '']);
 
+            // $mhMock= $this->getMockBuilder(MailingsHelpers::class)
+            //              ->setMethods(['wp_query_posts', 'getFields'])
+            //              ->getMock();
+            
+            // $mhMock->expects($this->once())
+            //     ->method('wp_query_posts')
+            //     ->will($this->returnValue($postObject));
 
+            // $mhMock->expects($this->once())
+            //     ->method('getFields');
+           
+            // $subject = new Mailings();
+    
+            // $subject->get_distributions($wpdb, $mhMock);
+        // }
 
-
-
-
-        //++++++++++++TESTING IN PROGRESS BELOW++++++++
-
-        
-        public function test_get_fields(): void 
+        public function test_mailingsHelpers_setUpCampaigns(): void 
         {
             $wpdb = new wpdb();
             $postObject = new stdClass();
             $postObject->posts = array(0 => (object) ['ID' => '', 'post_title'=> '']);
 
             $mhMock= $this->getMockBuilder(MailingsHelpers::class)
-                         ->setMethods(['wp_query_posts', 'getFields'])
+                         ->setMethods(['wp_query_posts', 'setUpCampaigns'])
                          ->getMock();
             
             $mhMock->expects($this->once())
@@ -147,68 +160,12 @@ final class mailingsClass extends TestCase
                 ->will($this->returnValue($postObject));
 
             $mhMock->expects($this->once())
-                ->method('getFields');
+                ->method('setUpCampaigns');
            
             $subject = new Mailings();
     
             $subject->get_distributions($wpdb, $mhMock);
         }
-
-        // public function test_mailingsHelpers_setUpCampaigns(): void 
-        // {
-        //     $wpdb = new wpdb();
-        //     // $postObject = new stdClass();
-        //     // $postObject->posts = array(0 => (object) ['ID' => 'Here we go']);
-
-        //     $mhMock= $this->getMockBuilder(MailingsHelpers::class)
-        //                 ->setMethods(['wp_query_posts', 'setUpCampaigns'])
-        //                 ->getMock();
-
-        //     $mhMock->expects($this->once())
-        //         ->method('wp_query_posts')
-        //         ->will($this->returnValue($postObject));
-
-        //     $mhMock->expects($this->once())
-        //         ->method('setUpCampaigns');
-
-        //     $mailings = new Mailings();
-           
-        //     $mailings->get_distributions($wpdb, $mhMock);
-        // }
-
-        // public function test_mailingsHelpers_wp_query_posts_method(): void 
-        // {
-        //     $wpdb = new wpdb();
-    
-        //     $postObject = new stdClass();
-        //     $postObject->posts = array(0 => (object) ['ID' => 'Here we go']);
-
-        //     $mhMock = new MailingsHelpers();
-        //     $mhMock->expects($this->once())
-        //             ->method('wp_query_posts')
-        //             ->willReturn($postObject);
-            
-        //     $mailingsInstance = new Mailings();   
-
-        //     $mailingsInstance->get_distributions($wpdb, $mhMock);
-        // }
-
-        // public function test_mailingsHelpers_setUpCampaign_method(): void 
-        // {
-        //     $wpdb = new wpdb();
-    
-        //     // $postObject = new stdClass();
-        //     // $postObject->posts = array(0 => (object) ['ID' => 'Here we go']);
-
-        //     $mhMock = $this->createMock(MailingsHelpers::class);
-        //     $mhMock->expects($this->once())
-        //             ->method('setUpCampaigns');
-        //             // ->willReturn($postObject);
-            
-        //     $mailingsInstance = new Mailings();   
-
-        //     $mailingsInstance->get_distributions($wpdb, $mhMock);
-        // }
     }
 
     // 'posts' => array ( 0 => WP_Post::__set_state(array( 'ID' => 263, 'post_author' => '8', 'post_date' => '2018-06-26 20:10:27', 'post_date_gmt' => '2018-06-26 20:10:27', 'post_content' => '', 'post_title' => 'No wall testing', 'post_excerpt' => '', 'post_status' => 'publish', 'comment_status' => 'closed', 'ping_status' => 'closed', 'post_password' => '', 'post_name' => 'no-wall-testing-2', 'to_ping' => '', 'pinged' => '', 'post_modified' => '2018-06-28 17:54:34', 'post_modified_gmt' => '2018-06-28 17:54:34', 'post_content_filtered' => '', 'post_parent' => 0, 'guid' => 'https://victorykit.local/?post_type=campaign&#038;p=263', 'menu_order' => 0, 'post_type' => 'campaign', 'post_mime_type' => '', 'comment_count' => '0', 'filter' => 'raw', )), ), 'post_count' => 1, 'current_post' => -1, 'in_the_loop' => false, 'post' => WP_Post::__set_state(array( 'ID' => 263, 'post_author' => '8', 'post_date' => '2018-06-26 20:10:27', 'post_date_gmt' => '2018-06-26 20:10:27', 'post_content' => '', 'post_title' => 'No wall testing', 'post_excerpt' => '', 'post_status' => 'publish', 'comment_status' => 'closed', 'ping_status' => 'closed', 'post_password' => '', 'post_name' => 'no-wall-testing-2', 'to_ping' => '', 'pinged' => '', 'post_modified' => '2018-06-28 17:54:34', 'post_modified_gmt' => '2018-06-28 17:54:34', 'post_content_filtered' => '', 'post_parent' => 0, 'guid' => 'https://victorykit.local/?post_type=campaign&#038;p=263', 'menu_order' => 0, 'post_type' => 'campaign', 'post_mime_type' => '', 'comment_count' => '0', 'filter' => 'raw', )), 'comment_count' => 0, 'current_comment' => -1, 'found_posts' => '1', 'max_num_pages' => 1.0, 'max_num_comment_pages' => 0, 'is_single' => false, 'is_preview' => false, 'is_page' => false, 'is_archive' => true, 'is_date' => false, 'is_year' => false, 'is_month' => false, 'is_day' => false, 'is_time' => false, 'is_author' => false, 'is_category' => false, 'is_tag' => false, 'is_tax' => false, 'is_search' => false, 'is_feed' => false, 'is_comment_feed' => false, 'is_trackback' => false, 'is_home' => false, 'is_404' => false, 'is_embed' => false, 'is_paged' => false, 'is_admin' => false, 'is_attachment' => false, 'is_singular' => false, 'is_robots' => false, 'is_posts_page' => false, 'is_post_type_archive' => true, 'query_vars_hash' => 'e36a12d927198b4f30d55d60b891715f', 'query_vars_changed' => false, 'thumbnails_cached' => false, 'stopwords' => NULL, 'compat_fields' => array ( 0 => 'query_vars_hash', 1 => 'query_vars_changed', ), 'compat_methods' => array ( 0 => 'init_query_flags', 1 => 'parse_tax_query', ), ))
