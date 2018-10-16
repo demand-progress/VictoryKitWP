@@ -211,9 +211,17 @@ final class mailingsClass extends TestCase
                 )
             );
             // $postObject->posts = array(0 => (object) ['ID' => '', 'post_title'=> '']);
+            
+            $mailings_stats = array(0 => [
+                                            'campaign_id' => 263, 
+                                            'conversions' => 0, 
+                                            'losses' => 0,
+                                            'sent' => 0,
+                                            'variation_subject' => 0
+                                        ]);
  
             $mhMock= $this->getMockBuilder(MailingsHelpers::class)
-                ->setMethods(['wp_query_posts', 'setUpCampaigns'])
+                ->setMethods(['wp_query_posts', 'setUpCampaigns', 'get_mailings_results_wpdb'])
                 ->getMock();
 
             $mhMock->expects($this->once())
@@ -223,6 +231,10 @@ final class mailingsClass extends TestCase
             $mhMock->expects($this->once())
                 ->method('setUpCampaigns')
                 ->will($this->returnValue($campaigns));
+
+            $mhMock->expects($this->once())
+                ->method('get_mailings_results_wpdb')
+                ->will($this->returnValue($mailings_stats));
                         
             $mailingsMock->get_distributions($wpdb, $mhMock); 
         }
