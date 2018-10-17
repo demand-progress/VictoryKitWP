@@ -32,30 +32,31 @@ use PHPUnit\Framework\TestCase;
 
 final class mailingsClass extends TestCase
     {   
-        // public function test_vk_mailings_create_new_mailings_action_two_campaigns(): void 
-        // {   
-        //     global $TwoCampaigns;
+        public function test_vk_mailings_create_new_mailings_action_two_campaigns(): void 
+        {   
+            global $TwoCampaigns;
 
-        //     $vk_mailings_mock = $this->createMock(Mailings::class);
-        //     $wpdb_mock = $this->createMock(wpdb::class);
+            $vk_mailings_mock = $this->createMock(Mailings::class);
+            $wpdb_mock = $this->createMock(wpdb::class);
+            $mhMock= $this->createMock(MailingsHelpers::class);
         
-        //     $vk_mailings_mock->expects($this->once())
-        //         ->method('get_distributions')
-        //         ->willReturn($TwoCampaigns);
+            $vk_mailings_mock->expects($this->once())
+                ->method('get_distributions')
+                ->willReturn($TwoCampaigns);
                     
-        //     $vk_mailings_mock->expects($this->exactly(2))
-        //         ->method('get_fresh_subscribers_for_campaign')
-        //         ->willReturn(array( 0 => 6630470, 1 => 6630472,));
+            $mhMock->expects($this->exactly(2))
+                ->method('get_fresh_subscribers_for_campaign')
+                ->willReturn(array( 0 => 6630470, 1 => 6630472,));
 
-        //     $vk_mailings_mock->expects($this->exactly(3))
-        //         ->method('send');
+            $vk_mailings_mock->expects($this->exactly(3))
+                ->method('send');
 
-        //     $wpdb_mock->expects($this->exactly(1))
-        //         ->method('query');
+            $wpdb_mock->expects($this->exactly(1))
+                ->method('query');
 
-        //     $result = vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock);
-        //     // $this->assertTrue($result === null);
-        // }
+            $result = vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock, $mhMock);
+            // $this->assertTrue($result === null);
+        }
 
         // public function test_vk_mailings_create_new_mailings_action_one_campaigns(): void 
         // {   
@@ -63,12 +64,13 @@ final class mailingsClass extends TestCase
 
         //     $vk_mailings_mock = $this->createMock(Mailings::class);
         //     $wpdb_mock = $this->createMock(wpdb::class);
+        //     $mhMock = $this->createMock(MailingsHelpers::class);
         
         //     $vk_mailings_mock->expects($this->once())
         //         ->method('get_distributions')
         //         ->willReturn($singleCampaign);
                 
-        //     $vk_mailings_mock->expects($this->exactly(1))
+        //     $mhMock->expects($this->exactly(1))
         //         ->method('get_fresh_subscribers_for_campaign')
         //         ->willReturn(array( 0 => 6630470, 1 => 6630472,));
 
@@ -87,12 +89,13 @@ final class mailingsClass extends TestCase
 
         //     $vk_mailings_mock = $this->createMock(Mailings::class);
         //     $wpdb_mock = $this->createMock(wpdb::class);
+        //     $mhMock = $this->createMock(MailingsHelpers::class);
 
         //     $vk_mailings_mock->expects($this->once())
         //         ->method('get_distributions')
         //         ->willReturn($twoSubjectCampaign);
                    
-        //     $vk_mailings_mock->expects($this->once())
+        //     $mhMock->expects($this->once())
         //         ->method('get_fresh_subscribers_for_campaign')
         //         ->willReturn(array( 0 => 6630470, 1 => 6630472,));
 
@@ -189,107 +192,106 @@ final class mailingsClass extends TestCase
         //     $subject->get_distributions($wpdb, $mhMock);
         // }
 
-        public function test_mailings_distribution_post_method(): void 
-        {
-            $mailings = new Mailings();
-            $wpdb = new wpdb();
-            $postObject = new stdClass();
+        // public function test_mailings_distribution_post_method(): void 
+        // {
+        //     $mailings = new Mailings();
+        //     $wpdb = new wpdb();
+        //     $postObject = new stdClass();
       
-            $postObject->posts = array ( 0 => (object)(array( 'ID' => 263, 'post_author' => '8', 'post_date' => '2018-06-26 20:10:27', 'post_date_gmt' => '2018-06-26 20:10:27', 'post_content' => '', 'post_title' => 'No wall testing', 'post_excerpt' => '', 'post_status' => 'publish', 'comment_status' => 'closed', 'ping_status' => 'closed', 'post_password' => '', 'post_name' => 'no-wall-testing-2', 'to_ping' => '', 'pinged' => '', 'post_modified' => '2018-06-28 17:54:34', 'post_modified_gmt' => '2018-06-28 17:54:34', 'post_content_filtered' => '', 'post_parent' => 0, 'guid' => 'https://victorykit.local/?post_type=campaign&#038;p=263', 'menu_order' => 0, 'post_type' => 'campaign', 'post_mime_type' => '', 'comment_count' => '0', 'filter' => 'raw', )), );
+        //     $postObject->posts = array ( 0 => (object)(array( 'ID' => 263, 'post_author' => '8', 'post_date' => '2018-06-26 20:10:27', 'post_date_gmt' => '2018-06-26 20:10:27', 'post_content' => '', 'post_title' => 'No wall testing', 'post_excerpt' => '', 'post_status' => 'publish', 'comment_status' => 'closed', 'ping_status' => 'closed', 'post_password' => '', 'post_name' => 'no-wall-testing-2', 'to_ping' => '', 'pinged' => '', 'post_modified' => '2018-06-28 17:54:34', 'post_modified_gmt' => '2018-06-28 17:54:34', 'post_content_filtered' => '', 'post_parent' => 0, 'guid' => 'https://victorykit.local/?post_type=campaign&#038;p=263', 'menu_order' => 0, 'post_type' => 'campaign', 'post_mime_type' => '', 'comment_count' => '0', 'filter' => 'raw', )), );
                 
-           //** must update return value from campaigns
+        //    //** must update return value from campaigns
          
-            $campaigns = array(
-                263 => array(
-                    "conversions" => 0,
-                    "fields" => array(
-                        "subjects" => array ( 0 => array ( 'subject' => 'Tell Senate: No attacks on immigrants', 'enabled' => true, ),       1 => array ( 'subject' => "Block Trump's attacks on immigrants", 'enabled' => true, ),)
-                    ),
-                    "id" => 263,
-                    "losses" => 0,
-                    "sent" => 0,
-                    "subjects" => array (),
-                    "title" => "No wall testing",
-                    "valid" => true
-                )
-            );
-            // $postObject->posts = array(0 => (object) ['ID' => '', 'post_title'=> '']);
+        //     $campaigns = array(
+        //         263 => array(
+        //             "conversions" => 0,
+        //             "fields" => array(
+        //                 "subjects" => array ( 0 => array ( 'subject' => 'Tell Senate: No attacks on immigrants', 'enabled' => true, ),       1 => array ( 'subject' => "Block Trump's attacks on immigrants", 'enabled' => true, ),)
+        //             ),
+        //             "id" => 263,
+        //             "losses" => 0,
+        //             "sent" => 0,
+        //             "subjects" => array (),
+        //             "title" => "No wall testing",
+        //             "valid" => true
+        //         )
+        //     );
+        //     // $postObject->posts = array(0 => (object) ['ID' => '', 'post_title'=> '']);
             
-            $mailings_stats = array(0 => [
-                                            'campaign_id' => 263, 
-                                            'conversions' => 0, 
-                                            'losses' => 0,
-                                            'sent' => 0,
-                                            'variation_subject' => 0
-                                        ]);
+        //     $mailings_stats = array(0 => [
+        //                                     'campaign_id' => 263, 
+        //                                     'conversions' => 0, 
+        //                                     'losses' => 0,
+        //                                     'sent' => 0,
+        //                                     'variation_subject' => 0
+        //                                 ]);
  
-            $mhMock= $this->getMockBuilder(MailingsHelpers::class)
-                ->setMethods(['wp_query_posts', 'setUpCampaigns', 'get_mailings_results_wpdb', 'get_fresh_subscribers_for_campaign'])
-                ->getMock();
+        //     $mhMock= $this->getMockBuilder(MailingsHelpers::class)
+        //         ->setMethods(['wp_query_posts', 'setUpCampaigns', 'get_mailings_results_wpdb', 'get_fresh_subscribers_for_campaign'])
+        //         ->getMock();
 
-            $mhMock->expects($this->once())
-                ->method('wp_query_posts')
-                ->will($this->returnValue($postObject));
+        //     $mhMock->expects($this->once())
+        //         ->method('wp_query_posts')
+        //         ->will($this->returnValue($postObject));
 
-            $mhMock->expects($this->once())
-                ->method('setUpCampaigns')
-                ->will($this->returnValue($campaigns));
+        //     $mhMock->expects($this->once())
+        //         ->method('setUpCampaigns')
+        //         ->will($this->returnValue($campaigns));
 
-            $mhMock->expects($this->once())
-                ->method('get_mailings_results_wpdb')
-                ->will($this->returnValue($mailings_stats));
+        //     $mhMock->expects($this->once())
+        //         ->method('get_mailings_results_wpdb')
+        //         ->will($this->returnValue($mailings_stats));
 
-            $mhMock->expects($this->once())
-                ->method('get_fresh_subscribers_for_campaign')
-                ->will($this->returnValue(['6630475', '6630477', '6630478','6630479']));
+        //     $mhMock->expects($this->once())
+        //         ->method('get_fresh_subscribers_for_campaign')
+        //         ->will($this->returnValue(['6630475', '6630477', '6630478','6630479']));
             
-            $this->assertEquals(array(
-                'campaigns' => Array(
-                    0 => Array(
-                        'conversions' => 0,
-                        'fields' => Array(
-                            'subjects' => Array(
-                                0 => Array(
-                                    'subject' => 'Tell Senate: No attacks on immigrants',
-                                    'enabled' => true
-                                ),
-                                1 => Array(
-                                    'subject' => "Block Trump's attacks on immigrants",
-                                    'enabled' => true
-                                )
-                            )
-                        ),
-                        'id' => 263,
-                        'losses' => 0,
-                        'sent' => 0,
-                        'subjects' => Array(
-                            0 => Array(
-                                'conversions' => 0,
-                                'losses' => 0,
-                                'sent' => 0,
-                                'title' => 'Tell Senate: No attacks on immigrants',
-                                'rate' => 1,
-                                'share' => 1
-                            )
-                        ),
-                        'title' => 'No wall testing',
-                        'valid' => true,
-                        'rate' => 1,
-                        'share' => 1,
-                        'limit' => 4.0
-                    )
-                ),
-                'overall' => Array(
-                    'conversions' => 0,
-                    'losses' => 0,
-                    'sent' => 0,
-                    'boost' => 500,
-                    'rate' => 1
-                )
-            ), $mailings->get_distributions($wpdb, $mhMock));
+        //     $this->assertEquals(array(
+        //         'campaigns' => Array(
+        //             0 => Array(
+        //                 'conversions' => 0,
+        //                 'fields' => Array(
+        //                     'subjects' => Array(
+        //                         0 => Array(
+        //                             'subject' => 'Tell Senate: No attacks on immigrants',
+        //                             'enabled' => true
+        //                         ),
+        //                         1 => Array(
+        //                             'subject' => "Block Trump's attacks on immigrants",
+        //                             'enabled' => true
+        //                         )
+        //                     )
+        //                 ),
+        //                 'id' => 263,
+        //                 'losses' => 0,
+        //                 'sent' => 0,
+        //                 'subjects' => Array(
+        //                     0 => Array(
+        //                         'conversions' => 0,
+        //                         'losses' => 0,
+        //                         'sent' => 0,
+        //                         'title' => 'Tell Senate: No attacks on immigrants',
+        //                         'rate' => 1,
+        //                         'share' => 1
+        //                     )
+        //                 ),
+        //                 'title' => 'No wall testing',
+        //                 'valid' => true,
+        //                 'rate' => 1,
+        //                 'share' => 1,
+        //                 'limit' => 4.0
+        //             )
+        //         ),
+        //         'overall' => Array(
+        //             'conversions' => 0,
+        //             'losses' => 0,
+        //             'sent' => 0,
+        //             'boost' => 500,
+        //             'rate' => 1
+        //         )
+        //     ), $mailings->get_distributions($wpdb, $mhMock));
             
-          
-        }
+        // }
     }
 
 
