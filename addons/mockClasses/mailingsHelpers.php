@@ -1,7 +1,7 @@
 <?
 
 class MailingsHelpers {
-    function wp_query_posts(){
+    function wp_query_posts($mh_mock){
        return new WP_Query(array(
             'post_type' => 'campaign',
             'post_status' => 'publish',
@@ -10,14 +10,14 @@ class MailingsHelpers {
 
     function getFields($id, $mh_mock){
         if($mh_mock){
-            print('in side get fields');
+            return array('subjects' => array());
         } else {
            return get_fields($id);
         }
     }
 
     function setUpCampaigns($results, $campaigns, $mh_mock){
-        print('inside setUpCampaigns func');
+       
         $campaigns = $campaigns;
         foreach ($results->posts as $campaign) {
             $id = $campaign->ID;
@@ -46,7 +46,6 @@ class MailingsHelpers {
     }
 
     function get_mailings_results_wpdb($db){
-        print('inside get mailings result wpdb');
         return $db->get_results('
             SELECT
                 vkm.campaign_id,
@@ -60,39 +59,46 @@ class MailingsHelpers {
                 vkm.campaign_id, vkm.variation_subject
         ', ARRAY_A);
     }
-//   function mailingStats($mailings, $campaigns, $overall){
-//     $results = array();
 
-//       foreach ($mailings as $mailing) {
-//           $id = $mailing['campaign_id'];
-
-//           // Make sure to only include currently published campaigns in overall data
-//           // TODO: why not just check for campaign published in query above?
-//           if (!isset($campaigns[$id])) {
-//               continue;
-//           }
-
-//           $overall['conversions'] += $mailing['conversions'];
-//           $overall['losses'] += $mailing['losses'];
-//           $overall['sent'] += $mailing['sent'];
-
-//           $campaigns[$id]['conversions'] += $mailing['conversions'];
-//           $campaigns[$id]['losses'] += $mailing['losses'];
-//           $campaigns[$id]['sent'] += $mailing['sent'];
-
-//           $subject = $mailing['variation_subject'];
-//           $campaigns[$id]['subjects'][$subject] = array(
-//               'conversions' => +$mailing['conversions'],
-//               'losses' => +$mailing['losses'],
-//               'sent' => +$mailing['sent'],
-//           );
-//       }
-//       $results['campaign_result'] = $campaigns;
-//       $results['overall_result'] = $overall;
-//       return $results;
-//    }
-
+     // Get all subscribers who have not been mailed for this campaign AND have not been mailed for any campaign within the last week
+     function get_fresh_subscribers_for_campaign($campaign_id, $limit, $wpdb_mock)
+     {
+         global $wpdb;
  
+         if($wpdb_mock){
+            $wpdb = $wpdb_mock;
+         }
+ 
+         $sql = "
+         SELECT
+             vks.ak_user_id
+         FROM
+             vk_subscriber AS vks
+         LEFT JOIN
+             vk_subscriber_mailing AS vksm
+         ON
+             vks.ak_user_id = vksm.ak_user_id AND
+             (
+                 vksm.campaign_id = $campaign_id
+                 OR
+                 vksm.created_at > DATE_SUB(NOW(), INTERVAL 1 WEEK)
+             )
+         WHERE
+             vksm.ak_user_id IS NULL
+         LIMIT $limit;
+         ";
+ 
+         // $allsql = trim(preg_replace('/\s+/', ' ',var_export( $sql, true)));
+         // error_log('line 260 sql query '.$allsql);
+                 
+         $response = $wpdb->get_col($sql, 0);
+                
+         $ids = array_map(function($el) {
+             return +$el;
+         }, $response);
+        
+         return $ids;
+     }
 }
 
 function mh() {
