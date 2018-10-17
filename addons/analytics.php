@@ -4,6 +4,7 @@
 if(!defined('ABSPATH')) exit;
 
 add_action('admin_menu', 'vk_analytics_admin_page');
+require_once(__DIR__. '/mockClasses/mailingsHelpers.php');
 
 function vk_analytics_admin_page() {
     add_menu_page(
@@ -18,7 +19,7 @@ function vk_analytics_admin_page() {
 }
 
 function vk_analytics_admin_page_render() {
-    global $vk_mailings;
+    global $vk_mailings, $mh;
 
     // Calculate distributions
     $distributions = $vk_mailings->get_distributions(0, 0);
@@ -33,7 +34,7 @@ function vk_analytics_admin_page_render() {
       //$fields = $campaign['fields'];
       // $url = get_permalink($id);
       $limit_per_campaign = round($campaign['share'] * $limit_per_day);
-      $campaign['num_fresh_ids'] = sizeof($vk_mailings->get_fresh_subscribers_for_campaign($id, $limit_per_campaign));
+      $campaign['num_fresh_ids'] = sizeof($mh->get_fresh_subscribers_for_campaign($id, $limit_per_campaign, 0));
     }
 
     // Render
