@@ -288,8 +288,115 @@ final class mailingsClass extends TestCase
                     'boost' => 500,
                     'rate' => 1
                 )
-            ), $mailings->get_distributions($wpdb, $mhMock));
+            ), $mailings->get_distributions($wpdb, $mhMock)); 
+        }
+
+        public function test_get_distributions_method(): void 
+        {
+            $mailings = new Mailings();
+            $wpdb = new wpdb();
+            $postObject = new stdClass();
+      
+            $postObject->posts = array ();
+                
+           //** must update return value from campaigns
+         
+            $campaigns = array(
+                263 => array(
+                    "conversions" => 0,
+                    "fields" => array(
+                        "subjects" => array ( 0 => array ( 'subject' => 'Tell Senate: No attacks on immigrants', 'enabled' => true, ),       1 => array ( 'subject' => "Block Trump's attacks on immigrants", 'enabled' => true, ),)
+                    ),
+                    "id" => 263,
+                    "losses" => 0,
+                    "sent" => 0,
+                    "subjects" => array ( 0 => array ( 'conversions' => 0, 'losses' => 0, 'sent' => 0, 'title' => 'Tell Senate: No attacks on immigrants', 'rate' => 1, 'share' => 0.5, ), 1 => array ( 'conversions' => 0, 'losses' => 0, 'sent' => 0, 'title' => "Block Trump's attacks on immigrants", 'rate' => 1, 'share' => 0.5)),
+                    "title" => "No wall testing",
+                    "valid" => true
+                )
+            );
+            // $postObject->posts = array(0 => (object) ['ID' => '', 'post_title'=> '']);
             
+            $mailings_stats = array(0 => [
+                                            'campaign_id' => 263, 
+                                            'conversions' => 2, 
+                                            'losses' => 2,
+                                            'sent' => 4,
+                                            'variation_subject' => 0
+                                        ]);
+ 
+            $mhMock= $this->getMockBuilder(MailingsHelpers::class)
+                ->setMethods(['wp_query_posts', 'setUpCampaigns', 'get_mailings_results_wpdb', 'get_fresh_subscribers_for_campaign'])
+                ->getMock();
+
+            $mhMock->expects($this->once())
+                ->method('wp_query_posts')
+                ->will($this->returnValue($postObject));
+
+            $mhMock->expects($this->once())
+                ->method('setUpCampaigns')
+                ->will($this->returnValue($campaigns));
+
+            $mhMock->expects($this->once())
+                ->method('get_mailings_results_wpdb')
+                ->will($this->returnValue($mailings_stats));
+
+            $mhMock->expects($this->once())
+                ->method('get_fresh_subscribers_for_campaign')
+                ->will($this->returnValue(['6630475', '6630477', '6630478','6630479']));
+            
+            $this->assertEquals(array(
+                'campaigns' => Array(
+                    0 => Array(
+                        'conversions' => 2,
+                        'fields' => Array(
+                            'subjects' => Array(
+                                0 => Array(
+                                    'subject' => 'Tell Senate: No attacks on immigrants',
+                                    'enabled' => true
+                                ),
+                                1 => Array(
+                                    'subject' => "Block Trump's attacks on immigrants",
+                                    'enabled' => true
+                                )
+                            )
+                        ),
+                        'id' => 263,
+                        'losses' => 2,
+                        'sent' => 4,
+                        'subjects' => Array(
+                            0 => Array(
+                                'conversions' => 2,
+                                'losses' => 2,
+                                'sent' => 4,
+                                'title' => 'Tell Senate: No attacks on immigrants',
+                                'rate' => 0.9841899722852103,
+                                'share' => 0.49800796812749004
+                            ),
+                            1 => Array(
+                                'conversions' => 0,
+                                'losses' => 0,
+                                'sent' => 0,
+                                'title' => "Block Trump's attacks on immigrants",
+                                'rate' => 0.9920634920634921,
+                                'share' => 0.50199203187251
+                            )
+                        ),
+                        'title' => 'No wall testing',
+                        'valid' => true,
+                        'rate' => 0.9841899722852103,
+                        'share' => 1.0,
+                        'limit' => 4.0
+                    )
+                ),
+                'overall' => Array(
+                    'conversions' => 2,
+                    'losses' => 2,
+                    'sent' => 4,
+                    'boost' => 500,
+                    'rate' => 0.9920634920634921
+                )
+            ), $mailings->get_distributions($wpdb, $mhMock)); 
         }
     }
 
