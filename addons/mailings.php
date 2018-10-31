@@ -396,6 +396,7 @@ function vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock, $
         $id = $campaign['id'];
         $fields = $campaign['fields'];
         $url = $mh->get_url($id);
+        $paramsList = Array();
         //need to print out why $limit_per_campaign NAN -> this is breaking everything
         // $allsql = trim(preg_replace('/\s+/', ' ',var_export( $campaign, true)));
         // error_log('%%%%%%%%%%% ');
@@ -437,8 +438,7 @@ function vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock, $
                 'url' => $url,
                 'variation_subject' => $index,
             );
-            // print('######');
-            // var_dump($params);
+            array_push($paramsList,$params);
             // $allsql = trim(preg_replace('/\s+/', ' ',var_export( $params, true)));
             // error_log('s line 563: '.$allsql);
             // $sCamp = trim(preg_replace('/\s+/', ' ',var_export( $params, true)));
@@ -467,6 +467,7 @@ function vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock, $
             }
         }
     }
+    return $paramsList;
 }
 add_action('vk_mailings_create_new_mailings', 'vk_mailings_create_new_mailings_action');
 
