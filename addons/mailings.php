@@ -15,8 +15,8 @@ class Mailings {
         // ...
     }
 
-    function get_distributions($wpdb_mock, $mh_mock)
-    {
+
+    function each_mailing_distribution($wpdb_mock, $mh_mock){
         global $wpdb;
         global $mh;
    
@@ -50,7 +50,8 @@ class Mailings {
         );
 
         $mailings = $mh->get_mailings_results_wpdb($wpdb);
-
+        $mailingsPrint = trim(preg_replace('/\s+/', ' ',var_export( $mailings, true)));
+       
     //    need to print error log here
     //    $mailingsPrint = trim(preg_replace('/\s+/', ' ',var_export( $mailings, true)));
     //    error_log('$$$line 54 return value of get_results '.$mailingsPrint);
@@ -80,13 +81,20 @@ class Mailings {
             );
         }
         // $campaignsPrint = trim(preg_replace('/\s+/', ' ',var_export( $campaigns, true)));
+        // error_log('$$$line 54 return value of get_results '.$campaignsPrint);
+        echo $mailingsPrint;
+        // $campaignsPrint = trim(preg_replace('/\s+/', ' ',var_export( $campaigns, true)));
         // error_log('$$$line 84 value of campaigns after loop '.$campaignsPrint);
 
         // This allows brand new campaigns to have a chance to succeed.
         // It probably is not needed if we are going to be sending each new campaign to more than several hundred people,
         // but it helps for testing with smaller amounts of people because it basically starts off the campaign at the same
         // rate as the overall campaign success rate and slightly adjusts from there
-        $boost = BOOST;
+        // $boost = BOOST;
+        $boost = get_option('boost');
+        echo '####';
+        echo $boost; 
+
         $overall['boost'] = $boost;
 
         // Overall rate
@@ -226,6 +234,225 @@ class Mailings {
             'overall' => $overall,
         );
     }
+
+    function get_distributions($wpdb_mock, $mh_mock)
+    {
+        global $wpdb;
+        global $mh;
+   
+        if($wpdb_mock){
+            $wpdb = $wpdb_mock;
+            $mh = $mh_mock; 
+        } 
+
+        if (!get_option('subscribed_users')) {
+          // no subscribed users in DB yet
+          return array('campaigns' => array(), 'overall' => array());
+        }
+
+        // Get active campaigns
+        $campaigns = array();
+
+        //**********investigate what comes back from wp_query_posts
+        $results = $mh->wp_query_posts($mh_mock);
+       
+        // $results1 = trim(preg_replace('/\s+/', ' ',var_export( $results, true)));
+        // var_dump($results1);
+
+        // var_dump($mh);
+        $campaigns = $mh->setUpCampaigns($results, $campaigns, $mh_mock);
+
+        // Get campaign performance
+        $overall = array(
+            'conversions' => 0,
+            'losses' => 0,
+            'sent' => 0,
+        );
+
+        $mailings = $mh->get_mailings_results_wpdb($wpdb);
+        $mailingsPrint = trim(preg_replace('/\s+/', ' ',var_export( $mailings, true)));
+       
+    //    need to print error log here
+    //    $mailingsPrint = trim(preg_replace('/\s+/', ' ',var_export( $mailings, true)));
+    //    error_log('$$$line 54 return value of get_results '.$mailingsPrint);
+        foreach ($mailings as $mailing) {
+            $id = $mailing['campaign_id'];
+
+            // Make sure to only include currently published campaigns in overall data
+            // TODO: why not just check for campaign published in query above?
+            if (!isset($campaigns[$id])) {
+                continue;
+            }
+           
+            $overall['conversions'] += $mailing['conversions'];
+            $overall['losses'] += $mailing['losses'];
+            $overall['sent'] += $mailing['sent'];
+
+            $campaigns[$id]['conversions'] += $mailing['conversions'];
+            $campaigns[$id]['losses'] += $mailing['losses'];
+            $campaigns[$id]['sent'] += $mailing['sent'];
+
+            $subject = $mailing['variation_subject'];
+            
+            $campaigns[$id]['subjects'][$subject] = array(
+                'conversions' => +$mailing['conversions'],
+                'losses' => +$mailing['losses'],
+                'sent' => +$mailing['sent'],
+            );
+        }
+        // $campaignsPrint = trim(preg_replace('/\s+/', ' ',var_export( $campaigns, true)));
+        // error_log('$$$line 54 return value of get_results '.$campaignsPrint);
+        // echo $mailingsPrint;
+        // $campaignsPrint = trim(preg_replace('/\s+/', ' ',var_export( $campaigns, true)));
+        // error_log('$$$line 84 value of campaigns after loop '.$campaignsPrint);
+
+        // This allows brand new campaigns to have a chance to succeed.
+        // It probably is not needed if we are going to be sending each new campaign to more than several hundred people,
+        // but it helps for testing with smaller amounts of people because it basically starts off the campaign at the same
+        // rate as the overall campaign success rate and slightly adjusts from there
+        $boost = get_option('boost');
+
+        $overall['boost'] = $boost;
+
+        // Overall rate
+        $overall['rate'] = ($overall['conversions'] - $overall['losses'] + $boost) / ($overall['sent'] + $boost);
+        
+        // $camp = trim(preg_replace('/\s+/', ' ',var_export( $campaigns, true)));
+        // error_log('line 199 campaigns setting stats overall with boost '.$camp);
+        // $arrayThing = ARRAY_A;
+        // $aThing = trim(preg_replace('/\s+/', ' ',var_export( $arrayThing, true)));
+        // error_log('line 80 Array_A value '.$aThing);    
+        
+        if ($overall['rate'] < 0) {
+            $overall['rate'] = 0; // TODO: why would we not track negative results?
+        }
+
+        // Calculate shares
+        $campaign_rate_sum = 0;
+
+        foreach ($campaigns as $campaign_index => &$campaign) {
+            // Subjects
+            $fields = $campaign['fields'];
+            $subject_rate_sum = 0;
+            $valid_subjects = 0;
+            
+            foreach ($campaign['subjects'] as $subject_index => &$subject) { 
+                $enabled = $fields['subjects'][$subject_index]['enabled'];
+                $subject['title'] = $fields['subjects'][$subject_index]['subject'];
+                if (!$enabled) {
+                    $subject['rate'] = 0;
+                    continue;
+                }
+
+                $valid_subjects++;
+
+                $rate = (
+                    ($subject['conversions'] - $subject['losses'] + $boost * $overall['rate'])
+                    /
+                    ($subject['sent'] + $boost)
+                );
+
+                if ($rate < 0) {
+                    $subject['rate'] = 0; // TODO: why not track negative rates?
+                    continue;
+                }
+
+                $subject['rate'] = $rate;
+                $subject_rate_sum += $rate; // TODO: why not track negative rates?
+            }
+
+            // If no enabled subjects skip this campaign
+            if ($valid_subjects == 0) {
+                $campaign['valid'] = false;
+                continue;
+            }
+
+            foreach ($campaign['subjects'] as $subject_index => &$subject) {
+                $share = $subject_rate_sum ? $subject['rate'] / $subject_rate_sum : 0;
+                $subject['share'] = $share;
+            }
+
+            // Campaign
+            $rate = (
+                ($campaign['conversions'] - $campaign['losses'] + $boost * $overall['rate'])
+                /
+                ($campaign['sent'] + $boost)
+            );
+
+            if ($rate < 0) {
+                $campaign['rate'] = 0; // TODO: why not track negative rates?
+                continue;
+            }
+
+            $campaign['rate'] = $rate;
+            $campaign_rate_sum += $rate;
+        }
+
+        // Filter out invalid campaigns
+        $campaigns = array_filter($campaigns, function($campaign) {
+            return $campaign['valid'];
+        });
+
+        // Get share percentages
+        foreach ($campaigns as $campaign_index => &$campaign) {
+            $share = $campaign_rate_sum ? $campaign['rate'] / $campaign_rate_sum : 0;
+            $campaign['share'] = $share;
+        }
+
+        // Limit share percentages, based on subscriber availability
+        $campaign_share_sum = 1;
+        $limit_per_day = get_option('subscribed_users') / 7;
+      
+        foreach ($campaigns as $campaign_index => &$campaign) {
+            
+            $limit_per_campaign = round($campaign['share'] * $limit_per_day);
+            // $limit = trim(preg_replace('/\s+/', ' ',var_export($limit_per_campaign, true)));
+            // error_log('line 192 limit_per_campaign '.$limit);
+            $fresh_ids = count($mh->get_fresh_subscribers_for_campaign($campaign['id'], $limit_per_campaign, $wpdb_mock));
+            // Plenty? Great.
+            //fresh ids should not be 0 
+           
+            if ($fresh_ids >= $limit_per_campaign) {
+                $campaign['limit'] = $limit_per_campaign;
+                continue;
+            }
+            // Shortage of fresh IDs. Calculations are required.
+            $campaign['limit'] = $fresh_ids;
+            //CURRENTLY RETURNING 0 FOR $SHARE THIS IS MAKING A NAN VALUE
+            $share = $fresh_ids / $limit_per_day;
+            
+            $campaign_share_sum += $share - $campaign['share'];
+
+            $campaign['share'] = $share;
+            
+            // $campShare = $campaign['share'];
+            // $allsql = trim(preg_replace('/\s+/', ' ',var_export( $campShare, true)));
+            // error_log('line 225 $campaign_share_sum '.$campaign_share_sum);
+            // error_log('line 226 variable campaing[share] '.$share);
+        }
+        
+        foreach ($campaigns as $campaign_index => &$campaign) {
+            $campaign['share'] = $campaign['share'] / $campaign_share_sum;
+        }
+        
+        usort($campaigns, function($a, $b) {
+            $difference = $b['share'] - $a['share'];
+            if ($difference == 0) {
+                return 0;
+            } else if ($difference > 0) {
+                return 1;
+            } else {
+                return -1;
+            }
+        });
+
+        return array(
+            'campaigns' => $campaigns,
+            'overall' => $overall,
+        );
+    }
+
+    
 
    
 
@@ -389,14 +616,14 @@ function vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock, $
     $limit_per_day = $mh->getoption();
     
     $distributions = $vk_mailings->get_distributions($vk_mailings_mock, $wpdb_mock, $mhMock);
-    // $distributions_results = trim(preg_replace('/\s+/', ' ',var_export( $distributions, true)));
+    $distributions_results = trim(preg_replace('/\s+/', ' ',var_export( $distributions, true)));
+    $paramsList = Array();
     // $distributions_results = sizeof($distributions_results);
-    // error_log('@@@ limit_per_day variable '.$distributions_results);
+    // error_log('distribution results two campaigns '.$distributions_results);
     foreach ($distributions['campaigns'] as $campaign) {
         $id = $campaign['id'];
         $fields = $campaign['fields'];
-        $url = $mh->get_url($id);
-        $paramsList = Array();
+        $url = $mh->get_url($id);  
         //need to print out why $limit_per_campaign NAN -> this is breaking everything
         // $allsql = trim(preg_replace('/\s+/', ' ',var_export( $campaign, true)));
         // error_log('%%%%%%%%%%% ');
@@ -438,6 +665,7 @@ function vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock, $
                 'url' => $url,
                 'variation_subject' => $index,
             );
+            
             array_push($paramsList,$params);
             // $allsql = trim(preg_replace('/\s+/', ' ',var_export( $params, true)));
             // error_log('s line 563: '.$allsql);
@@ -466,9 +694,10 @@ function vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock, $
                 $wpdb->query($sql);
             }
         }
-    }
+    } 
     return $paramsList;
 }
+
 add_action('vk_mailings_create_new_mailings', 'vk_mailings_create_new_mailings_action');
 
 
