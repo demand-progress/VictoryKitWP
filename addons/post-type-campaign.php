@@ -2,7 +2,7 @@
 
 // Exit if accessed directly
 if(!defined('ABSPATH')) exit;
-
+require_once(__DIR__. '/../constants.php');
 // Register post type
 add_action( 'init', 'register_post_type_campaign' );
 function register_post_type_campaign() {
@@ -114,7 +114,7 @@ function after_saving_campaign($post_id, $post, $update) {
                 'description' => 'Sample description',
                 'facebook_image_url' => 'https://s3.amazonaws.com/demandprogress/images/add-your-name.png',
             ),
-            'list' => '/rest/v1/list/26/', // VictoryKit
+            'list' => '/rest/v1/list/'.VK_LIST_ID.'/', // VictoryKit
             'title' => '(VK) ' . $post->post_title,
             'name' => $ak_page_short_name,
             'tags' => array(
