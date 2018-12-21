@@ -220,12 +220,15 @@ function after_saving_campaign($post_id, $post, $update) {
             'url' => "$permalink?phase=thanks",
             'send_email' => true,
             'email_from_line' => "/rest/v1/fromline/$from_line/",
-            'email_wrapper' => 2, // default after action wrapper in ActionKit
+            'email_wrapper' => 27, // default after action wrapper in ActionKit
             'email_subject' => $email_subject,
             'email_body' => $followup_email_body,
             'taf_body' => $email_sharing_body
         ),
     ));
+
+$mailingsPrint = trim(preg_replace('/\s+/', ' ',var_export( $response, true)));
+error_log('$$$response line 231 '.$mailingsPrint);
 
     if ($response['error']) {
         return;
