@@ -16,7 +16,7 @@ class Mailings {
     }
 
 
-    function each_mailing_distribution($wpdb_mock, $mh_mock){
+    function each_mailing_distribution($wpdb_mock, $mh_mock, $boost_test_value){
         global $wpdb;
         global $mh;
    
@@ -92,6 +92,11 @@ class Mailings {
         // rate as the overall campaign success rate and slightly adjusts from there
         // $boost = BOOST;
         $boost = get_option('boost');
+
+        if ($boost_test_value) {
+            $boost = $boost_test_value;
+        }
+        
         echo '####';
         echo $boost; 
 
@@ -232,10 +237,11 @@ class Mailings {
         return array(
             'campaigns' => $campaigns,
             'overall' => $overall,
+            'boost@@@' => $boost_test_value,
         );
     }
 
-    function get_distributions($wpdb_mock, $mh_mock)
+    function get_distributions($wpdb_mock, $mh_mock, $boost_test_value)
     {
         global $wpdb;
         global $mh;
@@ -274,7 +280,7 @@ class Mailings {
        
     //    need to print error log here
     //    $mailingsPrint = trim(preg_replace('/\s+/', ' ',var_export( $mailings, true)));
-    //    error_log('$$$line 54 return value of get_results '.$mailingsPrint);
+    //    error_log('$$$line 277 return value of get_results '.$mailingsPrint);
         foreach ($mailings as $mailing) {
             $id = $mailing['campaign_id'];
 
@@ -311,7 +317,11 @@ class Mailings {
         // but it helps for testing with smaller amounts of people because it basically starts off the campaign at the same
         // rate as the overall campaign success rate and slightly adjusts from there
         $boost = get_option('boost');
-
+        
+        if($boost_test_value){
+            $boost =  $boost_test_value;
+        }
+       
         $overall['boost'] = $boost;
 
         // Overall rate
@@ -453,9 +463,6 @@ class Mailings {
     }
 
     
-
-   
-
     // Update conversion stats from ActionKit for a campaign mailing
     function get_mailing_stats_from_ak($ak_mailing_id)
     {
@@ -604,7 +611,7 @@ add_action('vk_mailings_update_mailing_stats', 'vk_mailings_update_mailing_stats
 
 // Create new mailings based on the currently running campaigns
 //   Run once a day at 8am
-function vk_mailings_create_new_mailings_action($vk_mailings_mock, $wpdb_mock, $mhMock) {
+function vk_mailings_create_new_mailings_action($vk_mailings_mock=0, $wpdb_mock=0, $mhMock=0) {
     global $vk_mailings, $wpdb, $mh;
 
     if($vk_mailings_mock){
@@ -855,6 +862,10 @@ function vk_mailings_complete_mailings_action() {
         ";
         $response = $ak->query($sql);
 
+        $responseLog = trim(preg_replace('/\s+/', ' ',var_export( $response, true)));
+        error_log('line 861 response from query from ak->query '.$responseLog);
+
+
         if (!$response['data']) {
             continue;
         }
@@ -884,9 +895,13 @@ function vk_mailings_complete_mailings_action() {
 add_action('vk_mailings_complete_mailings', 'vk_mailings_complete_mailings_action');
 
 
-function vk_mailings_cron_test_action() {
-    $count = get_option('cron_test', 0);
-    update_option('cron_test', $count + 1);
+function vk_mailings_cron_test_action($thing=1, $thing2=2) {
+    $numargs = func_num_args();
+    error_log("Number of arguments: $numargs \n");
+    error_log("something :" .var_export($thing, true));
+    error_log("something2 :" .var_export($thing2, true));
+    // $count = get_option('cron_test', 0);
+    // update_option('cron_test', $count + 1);
 }
 add_action('vk_mailings_cron_test', 'vk_mailings_cron_test_action');
 
