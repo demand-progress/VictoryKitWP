@@ -125,6 +125,7 @@ final class mailingsClass extends TestCase
             $mailingsMock = new Mailings();
             $wpdb = new wpdb();
             $postObject = new stdClass();
+            $boost_test_value = 500; 
             $postObject->posts = array(0 => (object) ['ID' => '', 'post_title'=> '']);
 
             $mhMock= $this->getMockBuilder(MailingsHelpers::class)
@@ -135,13 +136,14 @@ final class mailingsClass extends TestCase
                         ->method('wp_query_posts')
                         ->will($this->returnValue($postObject));
 
-            $mailingsMock->get_distributions($wpdb, $mhMock); 
+            $mailingsMock->get_distributions($wpdb, $mhMock, $boost_test_value); 
         }
 
         public function test_get_fields(): void 
         {
             $wpdb = new wpdb();
             $postObject = new stdClass();
+            $boost_test_value = 500; 
             $postObject->posts = array(0 => (object) ['ID' => '', 'post_title'=> '']);
 
             $mhMock= $this->getMockBuilder(MailingsHelpers::class)
@@ -157,12 +159,13 @@ final class mailingsClass extends TestCase
            
             $subject = new Mailings();
     
-            $subject->get_distributions($wpdb, $mhMock);
+            $subject->get_distributions($wpdb, $mhMock, $boost_test_value);
         }
 
         public function test_mailingsHelpers_setUpCampaigns(): void 
         {
             $wpdb = new wpdb();
+            $boost_test_value = 500; 
             // $postObject = new stdClass();
             $postObject = array(0 => (object) ['ID' => '', 'post_title'=> '']);
             $campaigns = array( 0 => array( 'fields'=> '', 'campaign_id' => '', 'subjects' => array()));
@@ -181,12 +184,13 @@ final class mailingsClass extends TestCase
 
             $subject = new Mailings();
     
-            $subject->get_distributions($wpdb, $mhMock);
+            $subject->get_distributions($wpdb, $mhMock, $boost_test_value);
         }
 
         public function test_mailingsHelpers_get_mailings_results_wpdb(): void 
         {
             $wpdb = new wpdb();
+            $boost_test_value = 500; 
             // $postObject = new stdClass();
             $postObject = array( 0 => array( 'campaign_id' => '1'));
 
@@ -200,7 +204,7 @@ final class mailingsClass extends TestCase
            
             $subject = new Mailings();
     
-            $subject->get_distributions($wpdb, $mhMock);
+            $subject->get_distributions($wpdb, $mhMock, $boost_test_value);
         }
 
         public function test_mailings_distribution_post_method(): void 
@@ -208,6 +212,7 @@ final class mailingsClass extends TestCase
             $mailings = new Mailings();
             $wpdb = new wpdb();
             $postObject = new stdClass();
+            $boost_test_value = 500;
       
             $postObject->posts = array ( 0 => (object)(array( 'ID' => 263, 'post_author' => '8', 'post_date' => '2018-06-26 20:10:27', 'post_date_gmt' => '2018-06-26 20:10:27', 'post_content' => '', 'post_title' => 'No wall testing', 'post_excerpt' => '', 'post_status' => 'publish', 'comment_status' => 'closed', 'ping_status' => 'closed', 'post_password' => '', 'post_name' => 'no-wall-testing-2', 'to_ping' => '', 'pinged' => '', 'post_modified' => '2018-06-28 17:54:34', 'post_modified_gmt' => '2018-06-28 17:54:34', 'post_content_filtered' => '', 'post_parent' => 0, 'guid' => 'https://victorykit.local/?post_type=campaign&#038;p=263', 'menu_order' => 0, 'post_type' => 'campaign', 'post_mime_type' => '', 'comment_count' => '0', 'filter' => 'raw', )), );
                 
@@ -300,7 +305,7 @@ final class mailingsClass extends TestCase
                     'boost' => 500,
                     'rate' => 1
                 )
-            ), $mailings->get_distributions($wpdb, $mhMock)); 
+            ), $mailings->get_distributions($wpdb, $mhMock, $boost_test_value));
         }
 
         public function test_get_distributions_one_campaign_method(): void 
@@ -308,7 +313,7 @@ final class mailingsClass extends TestCase
             $mailings = new Mailings();
             $wpdb = new wpdb();
             $postObject = new stdClass();
-      
+            $boost_test_value = 500;
             $postObject->posts = array ();
                 
            //** must update return value from campaigns
@@ -415,13 +420,14 @@ final class mailingsClass extends TestCase
                     'boost' => 500,
                     'rate' => 0.996031746031746
                 )
-            ), $mailings->get_distributions($wpdb, $mhMock)); 
+            ), $mailings->get_distributions($wpdb, $mhMock, $boost_test_value)); 
         }
         public function test_get_distributions_one_campaign_one_greater_conversions_method(): void 
         {
             $mailings = new Mailings();
             $wpdb = new wpdb();
             $postObject = new stdClass();
+            $boost_test_value = 500;
       
             $postObject->posts = array ();
                 
@@ -529,7 +535,7 @@ final class mailingsClass extends TestCase
                     'boost' => 500,
                     'rate' => 0.996031746031746
                 )
-            ), $mailings->get_distributions($wpdb, $mhMock)); 
+            ), $mailings->get_distributions($wpdb, $mhMock, $boost_test_value)); 
         }
 
         public function test_send_function_with_one_campaign_one_subject_greater_conversion(): void 
@@ -624,7 +630,7 @@ final class mailingsClass extends TestCase
             $mailings = new Mailings();
             $wpdb = new wpdb();
             $postObject = new stdClass();
-      
+            $boost_test_value = 500;
             $postObject->posts = array ();
                 
            //** must update return value from campaigns
@@ -734,7 +740,7 @@ final class mailingsClass extends TestCase
                     'boost' => 500,
                     'rate' => 0.6666666666666666
                 )
-            ), $mailings->get_distributions($wpdb, $mhMock)); 
+            ), $mailings->get_distributions($wpdb, $mhMock, $boost_test_value)); 
         }
         
           public function test_create_mailings_mailing_no_conversions_only_losses(): void 
@@ -742,7 +748,7 @@ final class mailingsClass extends TestCase
             $mailings = new Mailings();
             $wpdb = new wpdb();
             $postObject = new stdClass();
-      
+            $boost_test_value = 500; 
             $postObject->posts = array ();
                 
            //** must update return value from campaigns
@@ -852,7 +858,7 @@ final class mailingsClass extends TestCase
                     'boost' => 500,
                     'rate' => 0.3333333333333333
                 )
-            ), $mailings->get_distributions($wpdb, $mhMock));
+            ), $mailings->get_distributions($wpdb, $mhMock, $boost_test_value));
         }
 
         public function test_vk_mailings_create_new_mailings_action_return_value(): void 
@@ -1167,7 +1173,7 @@ final class mailingsClass extends TestCase
             $mailings = new Mailings();
             $wpdb = new wpdb();
             $postObject = new stdClass();
-      
+            $boost_test_value = 500; 
             $postObject->posts = array ();
                 
             $campaigns = array(
@@ -1305,7 +1311,7 @@ final class mailingsClass extends TestCase
                     'boost' => 500,
                     'rate' => 0.3333333333333333
                 )
-            ), $mailings->get_distributions($wpdb, $mhMock));
+            ), $mailings->get_distributions($wpdb, $mhMock, $boost_test_value));
         }
 
         public function test_two_campaigns_one_subject_one_campaign_not_successful(): void 
