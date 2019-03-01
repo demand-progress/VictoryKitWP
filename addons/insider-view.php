@@ -3,26 +3,33 @@
 // Exit if accessed directly
 if(!defined('ABSPATH')) exit;
 
-add_action('admin_menu', 'vk_analytics_admin_page');
+add_action('admin_menu', 'vk_analytics_admin_page_copy');
 require_once(__DIR__. '/mockClasses/mailingsHelpers.php');
 
-function vk_analytics_admin_page() {
+function vk_analytics_admin_page_copy() {
     add_menu_page(
-        'Analytics Page',
-        'Analytics',
+        'Insider View Page',
+        'Insider View',
         'manage_options',
-        'vk-analytics',
-        'vk_analytics_admin_page_render',
+        'vk-insider-view',
+        'vk_insider_view_admin_page_render',
         'dashicons-chart-bar',
         7
     );
 }
+// 'Distributions Page',
+//         'Distributions',
+//         'manage_options',
+//         'vk-distributions',
+//         'vk_distributions_admin_page_render',
+//         'dashicons-chart-bar',
+//         7
 
-function vk_analytics_admin_page_render() {
+function vk_insider_view_admin_page_render() {
     global $vk_mailings, $mh;
 
     // Calculate distributions
-    $distributions = $vk_mailings->get_distributions(0, 0);
+    $distributions = $vk_mailings->each_mailing_distribution(0, 0);
     foreach ($distributions['campaigns'] as &$campaign) {
       unset($campaign['fields']);
     }

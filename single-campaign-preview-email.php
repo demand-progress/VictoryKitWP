@@ -10,7 +10,7 @@ get_post_meta($post->ID, 'ak_page_short_name', true);
 $fields['salutation'] = "<p>Hi Francine,</p>"; // TODO: Salutation doesnt seem to actually be used anywhere
 $fields['body'] = get_field('body', $post->ID);
 $fields['petition_headline'] = get_post_meta($post->ID, 'petition_headline', true);
-$html = $vk_mailings->render($fields);
+$html = $mh->render($fields);
 echo $html;
 
 ?>
